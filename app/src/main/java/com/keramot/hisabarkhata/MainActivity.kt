@@ -13,6 +13,7 @@ import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.provider.Settings
+import android.util.Base64
 import android.webkit.JavascriptInterface
 import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
@@ -106,6 +107,7 @@ class MainActivity : ComponentActivity() {
         ) askNotif.launch(Manifest.permission.POST_NOTIFICATIONS)
 
         Updates.schedule(this)
+        Reminders.schedule(this)
         handleIntent(intent)
     }
 
@@ -114,8 +116,14 @@ class MainActivity : ComponentActivity() {
         handleIntent(intent)
     }
 
+    override fun onPause() {
+        super.onPause()
+        js("window.hkPause && hkPause()")
+    }
+
     override fun onResume() {
         super.onResume()
+        if (pageReady) js("window.hkResume && hkResume()")
         if (waitingInstallPermission && canInstall()) {
             waitingInstallPermission = false
             installApk()
@@ -151,6 +159,33 @@ class MainActivity : ComponentActivity() {
             try { startActivity(Intent(base).setPackage(p)); toast("$label খুলছে, যাকে পাঠাবেন তাকে বেছে নিন"); return } catch (_: ActivityNotFoundException) {}
         }
         toast("ফোনে $label পাওয়া যায়নি")
+    }
+
+    // ---------- হিসাবের ছবি শেয়ার ----------
+    private fun shareImage(target: String, b64: String, text: String, phone: String) {
+        val f: File
+        try {
+            val dir = File(cacheDir, "share").apply { mkdirs() }
+            dir.listFiles()?.forEach { it.delete() }
+            f = File(dir, "hisab-${System.currentTimeMillis()}.png")
+            f.writeBytes(Base64.decode(b64, Base64.DEFAULT))
+        } catch (e: Exception) { toast("ছবি বানানো যায়নি"); return }
+        val uri = FileProvider.getUriForFile(this, "$packageName.files", f)
+        val base = Intent(Intent.ACTION_SEND).setType("image/png")
+            .putExtra(Intent.EXTRA_STREAM, uri)
+            .putExtra(Intent.EXTRA_TEXT, text)
+            .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        if (target == "whatsapp") {
+            for (pkg in listOf("com.whatsapp", "com.whatsapp.w4b")) {
+                try {
+                    val i = Intent(base).setPackage(pkg)
+                    if (phone.isNotBlank()) i.putExtra("jid", "$phone@s.whatsapp.net")
+                    startActivity(i); return
+                } catch (_: ActivityNotFoundException) {}
+            }
+            toast("ফোনে WhatsApp পাওয়া যায়নি"); return
+        }
+        try { startActivity(Intent.createChooser(base, "হিসাবের কপি পাঠান")) } catch (_: Exception) { toast("পাঠানোর মতো অ্যাপ পাওয়া যায়নি") }
     }
 
     private fun openOutside(u: Uri) {
@@ -316,6 +351,8 @@ class MainActivity : ComponentActivity() {
         @JavascriptInterface fun googleLogout() = runOnUiThread { this@MainActivity.googleLogout() }
         @JavascriptInterface fun saveFile(name: String, content: String) = this@MainActivity.saveFile(name, content)
         @JavascriptInterface fun shareText(target: String, text: String) = runOnUiThread { this@MainActivity.shareText(target, text) }
+        @JavascriptInterface fun shareImage(target: String, b64: String, text: String, phone: String) = runOnUiThread { this@MainActivity.shareImage(target, b64, text, phone) }
+        @JavascriptInterface fun setDues(json: String) { Reminders.save(this@MainActivity, json) }
         @JavascriptInterface fun appVersion(): String = BuildConfig.VERSION_NAME
         @JavascriptInterface fun checkUpdate(manual: Boolean) = checkForUpdate(manual)
         @JavascriptInterface fun startUpdate() = runOnUiThread { startDownload() }

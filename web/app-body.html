@@ -234,6 +234,39 @@ main{padding-bottom:calc(150px + env(safe-area-inset-bottom,0px))}
 .upd span{flex:1;min-width:0}
 .upd button{border:0;background:var(--gold);color:#2A1C00;font-weight:700;border-radius:99px;padding:8px 14px;flex:none}
 .upd button:disabled{opacity:.6}
+/* ---------- due ---------- */
+.duecard{margin-top:12px;background:var(--card);border-radius:18px;box-shadow:var(--shadow);overflow:hidden;border:1px solid #F6DFA6}
+.duehead{display:flex;align-items:center;gap:8px;padding:11px 14px;background:#FFF6E0;color:#6B4E04;font-weight:700;font-size:.9rem}
+.duehead span{margin-left:auto;font-size:.78rem;font-weight:600}
+.due-l{font-weight:600}
+.due-l.late{color:var(--get)}
+.duebtn{display:flex;align-items:center;gap:10px;width:100%;margin-top:12px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--field);text-align:left;font-size:.86rem;color:var(--muted)}
+.duebtn b{color:var(--ink)}
+.duebtn.late{border-color:var(--get-line);background:var(--get-soft);color:var(--get)}
+.duebtn.late b{color:var(--get)}
+.duebtn .ic{color:var(--brand)}
+.duebtn.late .ic{color:var(--get)}
+.quick{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.quick button{border:1.5px solid var(--line);background:#fff;border-radius:99px;padding:7px 14px;font-weight:600;font-size:.86rem;color:var(--brand)}
+.quick button.on{background:var(--brand-soft);border-color:var(--brand-2)}
+.stmtbtn{margin-top:10px}
+.stimg{width:100%;display:block;border-radius:12px;border:1px solid var(--line);max-height:52dvh;object-fit:contain;object-position:top;background:#fff}
+.stwait{padding:40px 0;text-align:center;color:var(--muted)}
+/* ---------- lock ---------- */
+.lock{position:fixed;inset:0;z-index:100;background:var(--brand);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:calc(24px + env(safe-area-inset-top,0px)) 24px calc(24px + env(safe-area-inset-bottom,0px))}
+.lock h2{font-family:var(--f-head);font-weight:700;font-size:1.5rem;margin:10px 0 0}
+.lock .lmsg{color:var(--on-brand-dim);font-size:.9rem;min-height:1.5em}
+.lock .lmsg.err{color:#FFD3CC;font-weight:600}
+.dots{display:flex;gap:16px;margin:14px 0 22px}
+.dots i{width:16px;height:16px;border-radius:50%;border:2px solid rgba(255,255,255,.7)}
+.dots i.on{background:#fff;border-color:#fff}
+.dots.shake{animation:shake .35s}
+@keyframes shake{25%{transform:translateX(-10px)}50%{transform:translateX(10px)}75%{transform:translateX(-6px)}}
+.pad{display:grid;grid-template-columns:repeat(3,72px);gap:14px 26px}
+.pad button{width:72px;height:72px;border-radius:50%;border:0;background:rgba(255,255,255,.12);color:#fff;font-family:var(--f-head);font-size:1.7rem;font-weight:600;display:grid;place-items:center}
+.pad button:active{background:rgba(255,255,255,.28)}
+.pad button.ghost{background:transparent}
+.forgot{margin-top:22px;border:0;background:transparent;color:var(--on-brand-dim);text-decoration:underline;font-size:.88rem}
 .toast{position:fixed;left:50%;bottom:calc(150px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:80;background:#12201C;color:#fff;padding:10px 18px;border-radius:14px;font-size:.9rem;max-width:calc(100% - 32px);box-shadow:var(--shadow-lg);text-align:center}
 @media (prefers-reduced-motion:no-preference){
   .sheet{animation:up .2s cubic-bezier(.2,.8,.2,1)}
@@ -271,6 +304,8 @@ main{padding-bottom:calc(150px + env(safe-area-inset-bottom,0px))}
   <symbol id="i-msgr" viewBox="0 0 24 24"><path d="M12 3.5c-4.8 0-8.5 3.5-8.5 8 0 2.5 1.2 4.7 3 6.1V21l2.9-1.6c.8.2 1.7.3 2.6.3 4.8 0 8.5-3.5 8.5-8s-3.7-8.2-8.5-8.2z"/><path d="m7.5 13.5 3-3.2 2 2 3.5-2.8-3 3.2-2-2z"/></symbol>
   <symbol id="i-share" viewBox="0 0 24 24"><circle cx="18" cy="5.5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="18.5" r="2.5"/><path d="m8.2 10.8 7.6-4M8.2 13.2l7.6 4"/></symbol>
   <symbol id="i-wallet" viewBox="0 0 24 24"><path d="M4 7.5A2.5 2.5 0 0 1 6.5 5H18v3"/><path d="M4 7.5V17a2 2 0 0 0 2 2h14V9H6.5A2.5 2.5 0 0 1 4 7.5z"/><circle cx="16" cy="14" r="1.2"/></symbol>
+  <symbol id="i-img" viewBox="0 0 24 24"><rect x="3.5" y="4.5" width="17" height="15" rx="2.5"/><circle cx="9" cy="10" r="1.8"/><path d="m4 17 5-4.5 4 3.5 3-2.5 4.5 4"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="10" rx="2.5"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/><circle cx="12" cy="15.5" r="1.3"/></symbol>
   <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15zM10 20a2 2 0 0 0 4 0"/></symbol>
 </svg>
 
@@ -315,6 +350,7 @@ main{padding-bottom:calc(150px + env(safe-area-inset-bottom,0px))}
       </div></div>
       <div class="wrap">
         <button class="nudge" id="nudge" hidden><svg class="ic"><use href="#i-store"/></svg><span><b>দোকানের নাম দিন</b>তাগাদার মেসেজে এই নাম যাবে</span><svg class="ic sm"><use href="#i-next"/></svg></button>
+        <div id="dueCard" hidden></div>
         <div class="tabs" role="tablist">
           <button role="tab" id="tabC" aria-selected="true" data-k="customer">কাস্টমার</button>
           <button role="tab" id="tabS" aria-selected="false" data-k="supplier">মহাজন</button>
@@ -337,6 +373,7 @@ main{padding-bottom:calc(150px + env(safe-area-inset-bottom,0px))}
       <div class="card"><h3><svg class="ic"><use href="#i-wallet"/></svg>পেমেন্ট নম্বর</h3><p>বিকাশ, নগদ, রকেট বা উপায় নম্বর দিন। তাগাদার মেসেজের নিচে এগুলো চলে যাবে, কাস্টমার সহজে টাকা পাঠাতে পারবে।</p><div class="paylist" id="payList"></div><button class="btn full" id="payAdd"><svg class="ic sm"><use href="#i-plus"/></svg>নম্বর যোগ করুন</button><div id="payPrev"></div></div>
       <div class="card"><h3><svg class="ic"><use href="#i-cloud"/></svg>হিসাব কোথায় থাকে</h3><p id="syncInfo"></p><div class="status" id="syncStatus"></div><div id="diagBox" class="hint" hidden></div><button class="btn full" id="diagBtn" style="margin-top:10px" hidden>সমস্যা খুঁজুন</button></div>
       <div class="card"><h3><svg class="ic"><use href="#i-down"/></svg>হিসাব ডাউনলোড</h3><p>এক্সেলে খোলা যায় এমন ফাইল। মাঝে মাঝে নামিয়ে রাখলে বাড়তি নিরাপত্তা।</p><div class="btnrow"><button class="btn" id="expP"><svg class="ic sm"><use href="#i-users"/></svg>বাকির তালিকা</button><button class="btn" id="expE"><svg class="ic sm"><use href="#i-book"/></svg>সব লেনদেন</button></div></div>
+      <div class="card" id="pinCard"><h3><svg class="ic"><use href="#i-lock"/></svg>পিন লক</h3><p id="pinInfo"></p><div class="btnrow" id="pinBtns"></div></div>
       <div class="card" id="verCard" hidden><h3><svg class="ic"><use href="#i-upd"/></svg>অ্যাপ আপডেট</h3><p id="verInfo"></p><button class="btn full" id="verCheck">আপডেট আছে কিনা দেখুন</button></div>
       <div class="card" id="accCard"><h3><svg class="ic"><use href="#i-shield"/></svg>অ্যাকাউন্ট</h3><p id="accInfo"></p><button class="btn dang full" id="logout"><svg class="ic sm"><use href="#i-out"/></svg>লগআউট</button></div>
       <div class="foot" id="foot">হিসাবের খাতা</div>
@@ -353,6 +390,14 @@ main{padding-bottom:calc(150px + env(safe-area-inset-bottom,0px))}
 <div id="pv" class="layer" hidden></div>
 <div id="sheetWrap" hidden></div>
 <div id="upd" class="upd" hidden><div class="wrap"><svg class="ic"><use href="#i-bell"/></svg><span id="updText">নতুন আপডেট এসেছে</span><button id="updBtn">আপডেট করুন</button></div></div>
+<div id="lock" class="lock" hidden>
+  <svg class="ic" style="width:44px;height:44px"><use href="#i-lock"/></svg>
+  <h2>পিন দিন</h2>
+  <div class="lmsg" id="lockMsg">হিসাব খুলতে ৪ অঙ্কের পিন দিন</div>
+  <div class="dots" id="lockDots"><i></i><i></i><i></i><i></i></div>
+  <div class="pad" id="lockPad"></div>
+  <button class="forgot" id="lockForgot">পিন ভুলে গেছেন?</button>
+</div>
 <div id="toast" class="toast" hidden></div>
 
 <script>
@@ -554,7 +599,28 @@ const kindName = k => k==="supplier" ? "মহাজন" : "কাস্টম�
 function balInfo(bal){ if(Math.abs(bal)<0.005) return {cls:"zero",lbl:"হিসাব শেষ",amt:"৳০"}; return bal>0 ? {cls:"get",lbl:"পাবো",amt:money(bal)} : {cls:"give",lbl:"দেবো",amt:money(bal)}; }
 
 /* ---------- বাকির খাতা ---------- */
+function isOwed(p){ return p.kind==="supplier" ? (p.bal||0) < -0.004 : (p.bal||0) > 0.004; }
+function daysFrom(d){ const [y,m,dd]=d.split("-").map(Number); const [ty,tm,td]=todayStr().split("-").map(Number); return Math.round((new Date(y,m-1,dd)-new Date(ty,tm-1,td))/864e5); }
+function dueLabel(d){ const k=daysFrom(d); if(k===0) return "আজ"; if(k===1) return "কাল"; if(k<0) return bnNum(-k)+" দিন দেরি"; return bnDate(d); }
+function renderDue(){
+  const t = todayStr();
+  const list = S.parties.filter(p=>p.due && p.due<=t && isOwed(p)).sort((a,b)=>a.due.localeCompare(b.due) || Math.abs(b.bal)-Math.abs(a.bal));
+  const el = $("#dueCard");
+  if(!list.length){ el.hidden = true; el.innerHTML = ""; return; }
+  el.hidden = false;
+  el.innerHTML = '<div class="duecard"><div class="duehead">'+icon("bell","sm")+'আজকের তাগাদা<span>'+bnNum(list.length)+' জন</span></div>'+
+    list.map(p=>{ const b=balInfo(p.bal); return '<button class="row" data-pid="'+esc(p.id)+'"><span class="av" '+avStyle(p.name)+'>'+esc(initial(p.name))+'</span><span class="mid"><span class="name">'+esc(p.name)+'</span><span class="sub"><span class="due-l late">'+(p.kind==="supplier"?"দিতে হবে: ":"দেওয়ার কথা: ")+dueLabel(p.due)+'</span></span></span><span class="amt"><b class="num '+(b.cls==="get"?"c-get":"c-give")+'">'+b.amt+'</b><span class="chip '+b.cls+'">'+b.lbl+'</span></span></button>'; }).join("")+'</div>';
+  el.querySelectorAll(".row").forEach(r=>r.onclick=()=>openParty(r.dataset.pid));
+}
+let lastDues = "";
+function syncDues(){
+  if(!(window.Android && Android.setDues)) return;
+  const d = S.parties.filter(p=>p.due && isOwed(p)).map(p=>({n:p.name, a:money(p.bal), d:p.due, k:p.kind||"customer"}));
+  const j = JSON.stringify(d);
+  if(j !== lastDues){ lastDues = j; try { Android.setDues(j); } catch(e){} }
+}
 function renderKhata(){
+  renderDue();
   let get=0, give=0, nGet=0, nGive=0;
   S.parties.forEach(p=>{ if(p.bal>0.004){ get+=p.bal; nGet++; } else if(p.bal<-0.004){ give-=p.bal; nGive++; } });
   $("#tGet").textContent=money(get); $("#tGive").textContent=money(give);
@@ -575,7 +641,7 @@ function renderKhata(){
   }
   $("#plist").innerHTML = rows.map(p=>{
     const b = balInfo(p.bal||0);
-    return '<button class="row" data-pid="'+esc(p.id)+'"><span class="av" '+avStyle(p.name)+'>'+esc(initial(p.name))+'</span><span class="mid"><span class="name">'+esc(p.name)+'</span><span class="sub">'+(p.lastAt?ago(p.lastAt):(p.phone?esc(bnDigits(p.phone)):""))+'</span></span><span class="amt"><b class="num '+(b.cls==="get"?"c-get":b.cls==="give"?"c-give":"c-muted")+'">'+b.amt+'</b><span class="chip '+b.cls+'">'+b.lbl+'</span></span></button>';
+    return '<button class="row" data-pid="'+esc(p.id)+'"><span class="av" '+avStyle(p.name)+'>'+esc(initial(p.name))+'</span><span class="mid"><span class="name">'+esc(p.name)+'</span><span class="sub">'+(isOwed(p)&&p.due ? '<span class="due-l'+(p.due<=todayStr()?" late":"")+'">দেওয়ার কথা: '+dueLabel(p.due)+'</span>' : (p.lastAt?ago(p.lastAt):(p.phone?esc(bnDigits(p.phone)):"")))+'</span></span><span class="amt"><b class="num '+(b.cls==="get"?"c-get":b.cls==="give"?"c-give":"c-muted")+'">'+b.amt+'</b><span class="chip '+b.cls+'">'+b.lbl+'</span></span></button>';
   }).join("");
 }
 
@@ -667,7 +733,10 @@ function renderParty(){
         '<a class="act '+(canTag?"":"dis")+'" href="'+(canTag?"sms:+"+ph+"?body="+encodeURIComponent(tagadaText(p)):"#")+'">'+icon("msg")+'SMS</a>'+
         '<a class="act '+(canTag?"":"dis")+'" target="_blank" rel="noopener" href="'+(canTag?"https://wa.me/"+ph+"?text="+encodeURIComponent(tagadaText(p)):"#")+'">'+icon("chat")+'WhatsApp</a>'+
         (window.Android ? '<button class="act '+(owes?"":"dis")+'" data-share="imo">'+icon("imo")+'IMO</button><button class="act '+(owes?"":"dis")+'" data-share="messenger">'+icon("msgr")+'Messenger</button><button class="act '+(owes?"":"dis")+'" data-share="other">'+icon("share")+'অন্য অ্যাপে</button>' : '')+
-      '</div></div>'+
+      '</div>'+
+      ((isOwed(p) || p.due) ? '<button class="duebtn'+(p.due&&p.due<=todayStr()&&isOwed(p)?" late":"")+'" id="pvDue">'+icon("cal","sm")+'<span>'+(sup?"টাকা দেওয়ার তারিখ: ":"টাকা দেওয়ার কথা: ")+(p.due?'<b>'+dueLabel(p.due)+(daysFrom(p.due)>1?"":" ("+bnDate(p.due)+")")+'</b>':'<b>তারিখ দিন</b>')+'</span></button>' : '')+
+      (ents.length ? '<button class="btn full stmtbtn" id="pvStmt">'+icon("img","sm")+'হিসাবের কপি ছবি করে পাঠান</button>' : '')+
+      '</div>'+
     '</div></div>'+
     '<div class="wrap" style="padding-bottom:calc(110px + env(safe-area-inset-bottom,0px))">'+
       (ph?'':'<div class="hint">মোবাইল নম্বর যোগ করলে কল, SMS আর WhatsApp-এ তাগাদা পাঠানো যাবে। উপরে ✎ চাপুন।</div>')+
@@ -679,6 +748,8 @@ function renderParty(){
   $("#pvEdit").onclick = () => partySheet(p);
   $("#pvGave").onclick = () => entrySheet(p,"dilam");
   $("#pvGot").onclick = () => entrySheet(p,"pelam");
+  if($("#pvDue")) $("#pvDue").onclick = () => dueSheet(p);
+  if($("#pvStmt")) $("#pvStmt").onclick = () => stmtSheet(p);
   $("#pv").querySelectorAll(".lrow[data-eid]").forEach(el=>el.onclick=()=>{ const e=S.pEntries.find(x=>x.id===el.dataset.eid); if(e) entrySheet(p,e.t,e); });
   $("#pv").querySelectorAll(".act.dis").forEach(a=>a.onclick=ev=>ev.preventDefault());
   $("#pv").querySelectorAll("[data-share]").forEach(bt=>bt.onclick=()=>{ if(window.Android && Android.shareText) Android.shareText(bt.dataset.share, tagadaText(p)); });
@@ -749,16 +820,25 @@ function entrySheet(p, t, e){
     amtField(e?e.amt:null)+
     '<label class="f"><span>বিবরণ (কী মাল / কীভাবে টাকা দিল)</span><input class="field" id="fNote" autocomplete="off" value="'+esc(e?e.note:"")+'" placeholder="'+(sup?"যেমন: চাল ২ বস্তা":"যেমন: চাল ৫ কেজি, তেল ১ লিটার")+'"></label>'+
     dateField(e?e.date:null)+
+    '<label class="f" id="fDueW"><span>'+(sup?"কবে টাকা দিতে হবে (ঐচ্ছিক)":"কবে টাকা দেবে (ঐচ্ছিক)")+'</span><input class="field" type="date" id="fDue" min="'+todayStr()+'" value="'+esc(p.due||"")+'"></label>'+
     '<button class="save" id="fSave">সেভ করুন</button>'+
     (e?'<button class="del" id="fDel">'+icon("trash","sm")+'এই লেনদেন মুছুন</button>':''),
     w => {
       bindTypeColor(w,"dilam","pelam");
+      const baki = sup ? "pelam" : "dilam";
+      const dueVis = () => { w.querySelector("#fDueW").hidden = w.querySelector('input[name="fT"]:checked').value !== baki; };
+      w.querySelectorAll('input[name="fT"]').forEach(r=>r.addEventListener("change", dueVis)); dueVis();
       if(!e) setTimeout(()=>w.querySelector("#fAmt").focus(), 60);
       w.querySelector("#fSave").onclick = () => {
         const amt = readAmt(w); if(amt==null) return;
         const n = { pid:p.id, t:w.querySelector('input[name="fT"]:checked').value, amt, note:w.querySelector("#fNote").value.trim(), date:w.querySelector("#fDate").value||todayStr() };
         if(e) store.updateEntry(e,n); else store.addEntry(n);
-        popLayer(() => toast(e?"ঠিক করা হয়েছে":"সেভ হয়েছে"));
+        const newBal = (p.bal||0) + eff(n) - (e?eff(e):0);
+        const owedNow = sup ? newBal < -0.004 : newBal > 0.004;
+        const dueIn = w.querySelector("#fDue").value;
+        if(!owedNow){ if(p.due) store.updateParty(p.id,{due:""}); }
+        else if(!w.querySelector("#fDueW").hidden && dueIn && dueIn !== (p.due||"")) store.updateParty(p.id,{due:dueIn});
+        popLayer(() => toast(!owedNow && p.due ? "সব শোধ, তাগাদার তারিখ মুছে গেছে" : (e?"ঠিক করা হয়েছে":"সেভ হয়েছে")));
       };
       const del = w.querySelector("#fDel");
       if(del) del.onclick = () => confirmBox(w, money(e.amt)+"-এর এই লেনদেন মুছে যাবে। নিশ্চিত?", () => { store.deleteEntry(e); popLayer(() => toast("মুছে ফেলা হয়েছে")); });
@@ -784,6 +864,116 @@ function cashSheet(t, x){
       };
       const del = w.querySelector("#fDel");
       if(del) del.onclick = () => confirmBox(w, "এটা মুছে যাবে। নিশ্চিত?", () => { store.deleteCash(x); popLayer(() => toast("মুছে ফেলা হয়েছে")); });
+    });
+}
+
+function dueSheet(p){
+  const sup = p.kind==="supplier";
+  const opts = [["কাল",1],["৩ দিন পর",3],["১ সপ্তাহ পর",7],["১৫ দিন পর",15],["১ মাস পর",30]];
+  openSheet(sup?"টাকা দেওয়ার তারিখ":"কবে টাকা দেবে",
+    '<p class="hint" style="margin:-6px 2px 12px">'+(sup?"এই তারিখে মহাজনকে টাকা দেওয়ার কথা মনে করিয়ে দেওয়া হবে।":"এই তারিখে সকালে ফোনে মনে করিয়ে দেবে, আর খাতার উপরে \"আজকের তাগাদা\" তালিকায় নাম আসবে।")+'</p>'+
+    '<div class="quick" id="fQuick">'+opts.map(([l,k])=>'<button data-k="'+k+'">'+l+'</button>').join("")+'</div>'+
+    '<label class="f"><span>তারিখ</span><input class="field" type="date" id="fDue" min="'+todayStr()+'" value="'+esc(p.due||"")+'"></label>'+
+    '<button class="save" id="fSave">সেভ করুন</button>'+
+    (p.due?'<button class="del" id="fDel">'+icon("trash","sm")+'তারিখ মুছে দিন</button>':''),
+    w => {
+      const inp = w.querySelector("#fDue");
+      const mark = () => w.querySelectorAll("#fQuick button").forEach(b=>b.classList.toggle("on", shiftDay(todayStr(),+b.dataset.k)===inp.value));
+      w.querySelectorAll("#fQuick button").forEach(b=>b.onclick=()=>{ inp.value = shiftDay(todayStr(),+b.dataset.k); mark(); });
+      inp.onchange = mark; mark();
+      w.querySelector("#fSave").onclick = () => { if(!inp.value){ toast("তারিখ বেছে নিন"); return; } store.updateParty(p.id,{due:inp.value}); popLayer(() => toast("তারিখ সেভ হয়েছে")); };
+      const del = w.querySelector("#fDel");
+      if(del) del.onclick = () => { store.updateParty(p.id,{due:""}); popLayer(() => toast("তারিখ মুছে গেছে")); };
+    });
+}
+
+/* ---------- হিসাবের কপি (ছবি) ---------- */
+async function makeStatement(p, entries){
+  try { await Promise.all(['700 40px "Anek Bangla"','600 40px "Anek Bangla"','400 30px "Noto Sans Bengali"','600 30px "Noto Sans Bengali"'].map(f=>document.fonts.load(f, "হিসাব৳০১২"))); } catch(e){}
+  const sup = p.kind==="supplier";
+  const asc = [...entries].sort((x,y)=> (x.date||"").localeCompare(y.date||"") || (x.at||0)-(y.at||0));
+  const MAX = 45; let opening = 0, rows = asc;
+  if(asc.length > MAX){ rows = asc.slice(-MAX); asc.slice(0, asc.length-MAX).forEach(e=>opening += eff(e)); }
+  const pays = payments();
+  const W = 1080, PAD = 56, RH = 84;
+  const H = 250 + 210 + 76 + (opening?RH:0) + rows.length*RH + 40 + (pays.length? 70 + pays.length*48 : 0) + 110;
+  const cv = document.createElement("canvas"); cv.width = W; cv.height = H;
+  const g = cv.getContext("2d");
+  const HEAD = '"Anek Bangla","Noto Sans Bengali",sans-serif', BODY = '"Noto Sans Bengali","Anek Bangla",sans-serif';
+  const C = {brand:"#0A5A4E", ink:"#12201C", muted:"#5B6B66", faint:"#8D9A96", line:"#E1E7E5", get:"#C8372B", give:"#0D7F4F", getS:"#FEF3F1", giveS:"#EEF8F2", gold:"#F3B53F"};
+  const T = (t,x,y,font,color,align) => { g.font=font; g.fillStyle=color; g.textAlign=align||"left"; g.fillText(t,x,y); };
+  const fit = (t,max,font) => { g.font=font; if(g.measureText(t).width<=max) return t; while(t.length>1 && g.measureText(t+"…").width>max) t=t.slice(0,-1); return t+"…"; };
+  g.fillStyle="#fff"; g.fillRect(0,0,W,H);
+  // header
+  g.fillStyle=C.brand; g.fillRect(0,0,W,250);
+  g.fillStyle=C.gold; g.fillRect(0,250-10,W,10);
+  T(fit(S.profile.shop||"আমার দোকান",W-2*PAD,'700 60px '+HEAD), PAD, 108, '700 60px '+HEAD, "#fff");
+  T("হিসাবের বিবরণ", PAD, 165, '500 34px '+BODY, "rgba(255,255,255,.8)");
+  T(bnDate(todayStr(),true)+" পর্যন্ত", W-PAD, 165, '500 30px '+BODY, "rgba(255,255,255,.8)", "right");
+  // customer block
+  let y = 250;
+  T(fit(p.name,W-2*PAD-380,'700 48px '+HEAD), PAD, y+86, '700 48px '+HEAD, C.ink);
+  T((sup?"মহাজন":"কাস্টমার")+(p.phone?" · "+bnDigits(p.phone):""), PAD, y+136, '400 30px '+BODY, C.muted);
+  const bal = p.bal||0, owed = isOwed(p);
+  const lbl = Math.abs(bal)<0.005 ? "হিসাব পরিষ্কার" : sup ? (bal<0?"আপনার পাওনা":"আপনার কাছে আমাদের পাওনা") : (bal>0?"মোট বাকি":"আপনার অগ্রিম জমা");
+  T(lbl, W-PAD, y+72, '600 30px '+BODY, C.muted, "right");
+  T(money(bal), W-PAD, y+140, '750 64px '+HEAD, owed ? C.get : (Math.abs(bal)<0.005 ? C.muted : C.give), "right");
+  if(owed && p.due) T("দেওয়ার তারিখ: "+bnDate(p.due,true), W-PAD, y+186, '500 26px '+BODY, C.get, "right");
+  y += 210;
+  // table head
+  const cA = W-PAD-470, cB = W-PAD-300, cC = W-PAD;   // right edges: col1 amt, col2 amt, jer
+  const h1 = sup ? "পরিশোধ" : "বাকি", h2 = sup ? "মাল/বাকি" : "জমা";
+  g.fillStyle="#F3F6F5"; g.fillRect(PAD-16,y,W-2*PAD+32,76);
+  T("তারিখ ও বিবরণ", PAD, y+50, '600 28px '+BODY, C.muted);
+  T(h1, cA, y+50, '700 28px '+BODY, C.get, "right");
+  T(h2, cB, y+50, '700 28px '+BODY, C.give, "right");
+  T("জের", cC, y+50, '700 28px '+BODY, C.muted, "right");
+  y += 76;
+  let run = opening;
+  const line = (yy) => { g.fillStyle=C.line; g.fillRect(PAD-16,yy,W-2*PAD+32,2); };
+  if(opening){
+    T("আগের জের", PAD, y+52, '600 30px '+BODY, C.ink);
+    T(money(opening), cC, y+52, '700 32px '+HEAD, opening>0?C.get:C.give, "right");
+    y += RH; line(y-1);
+  }
+  rows.forEach((e,i)=>{
+    run += eff(e);
+    if(i%2===1){ g.fillStyle="#FAFBFB"; g.fillRect(PAD-16,y,W-2*PAD+32,RH); }
+    T(fit(e.note||(e.t==="dilam"?(sup?"পরিশোধ":"বাকি"):(sup?"মাল":"জমা")),cA-PAD-190,'600 30px '+BODY), PAD, y+40, '600 30px '+BODY, C.ink);
+    T(bnDate(e.date,true), PAD, y+72, '400 24px '+BODY, C.faint);
+    if(e.t==="dilam") T(money(e.amt), cA, y+52, '700 32px '+HEAD, C.get, "right");
+    else T(money(e.amt), cB, y+52, '700 32px '+HEAD, C.give, "right");
+    T(money(run), cC, y+52, '600 30px '+HEAD, Math.abs(run)<0.005?C.muted:(run>0?C.ink:C.give), "right");
+    y += RH; line(y-1);
+  });
+  y += 40;
+  if(pays.length){
+    T("টাকা পাঠাতে পারেন", PAD, y+40, '700 32px '+HEAD, C.brand);
+    y += 70;
+    pays.forEach(x=>{ T(payLine(x).replace(/^• /,""), PAD, y+30, '500 28px '+BODY, C.ink); y += 48; });
+  }
+  g.fillStyle=C.line; g.fillRect(PAD,H-90,W-2*PAD,2);
+  T("হিসাবের খাতা অ্যাপে তৈরি", W/2, H-40, '500 24px '+BODY, C.faint, "center");
+  return cv.toDataURL("image/png");
+}
+function stmtSheet(p){
+  const entries = S.pEntries.slice();
+  openSheet("হিসাবের কপি",
+    '<div id="stBox" class="stwait">ছবি বানানো হচ্ছে…</div>'+
+    (window.Android && Android.shareImage
+      ? '<div class="two"><button class="big green" id="stWa">'+icon("chat")+'WhatsApp</button><button class="big" style="background:var(--brand)" id="stOther">'+icon("share")+'অন্য অ্যাপে</button></div>'
+      : '<p class="hint">ছবিটা চেপে ধরে সেভ বা শেয়ার করুন।</p>'),
+    async w => {
+      const url = await makeStatement(p, entries);
+      const box = w.querySelector("#stBox"); if(!box) return;
+      box.className = ""; box.innerHTML = '<img class="stimg" id="stImg" alt="হিসাবের কপি" src="'+url+'">';
+      const b64 = url.split(",")[1];
+      const text = isOwed(p) && p.kind!=="supplier" ? tagadaText(p) : (S.profile.shop||"আমাদের দোকান")+" — "+p.name+"-এর হিসাবের বিবরণ";
+      const ph = p.phone ? phoneBD(p.phone) : "";
+      const send = t => { try { Android.shareImage(t, b64, text, ph); } catch(e){ toast("পাঠানো যায়নি"); } };
+      const wa = w.querySelector("#stWa"), ot = w.querySelector("#stOther");
+      if(wa) wa.onclick = () => send("whatsapp");
+      if(ot) ot.onclick = () => send("other");
     });
 }
 
@@ -838,6 +1028,79 @@ function renderSync(){
   else if(S.pending){ st.className="status wait"; st.innerHTML=icon("upd","sm")+"সেভ হচ্ছে…"; }
   else { st.className="status"; st.innerHTML=icon("cloud","sm")+"সব হিসাব অনলাইনে সেভ আছে"; }
 }
+/* ---------- পিন লক ---------- */
+const PIN_KEY = "hk-pin-v1";
+const pinGet = () => { try { return localStorage.getItem(PIN_KEY) || ""; } catch(e){ return ""; } };
+const pinSet = v => { try { if(v) localStorage.setItem(PIN_KEY, v); else localStorage.removeItem(PIN_KEY); } catch(e){} };
+async function pinHash(pin){
+  const txt = "hk:" + pin;
+  try { const d = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(txt)); return Array.from(new Uint8Array(d)).map(b=>b.toString(16).padStart(2,"0")).join(""); }
+  catch(e){ let h=5381; for(const c of txt) h=((h<<5)+h+c.charCodeAt(0))>>>0; return "x"+h; }
+}
+let lockBuf = "", pausedAt = 0;
+function lockDots(){ $("#lockDots").querySelectorAll("i").forEach((d,i)=>d.classList.toggle("on", i<lockBuf.length)); }
+function showLock(){
+  if(!pinGet()) return;
+  lockBuf = ""; lockDots();
+  $("#lockMsg").className = "lmsg"; $("#lockMsg").textContent = "হিসাব খুলতে ৪ অঙ্কের পিন দিন";
+  $("#lock").hidden = false;
+}
+async function lockKey(k){
+  if(k==="del"){ lockBuf = lockBuf.slice(0,-1); lockDots(); return; }
+  if(lockBuf.length>=4) return;
+  lockBuf += k; lockDots();
+  if(lockBuf.length===4){
+    const ok = (await pinHash(lockBuf)) === pinGet();
+    if(ok){ $("#lock").hidden = true; lockBuf = ""; }
+    else {
+      const d = $("#lockDots"); d.classList.remove("shake"); void d.offsetWidth; d.classList.add("shake");
+      $("#lockMsg").className = "lmsg err"; $("#lockMsg").textContent = "পিন ভুল হয়েছে, আবার দিন";
+      setTimeout(()=>{ lockBuf = ""; lockDots(); }, 300);
+    }
+  }
+}
+function buildPad(){
+  const keys = ["1","2","3","4","5","6","7","8","9","","0","del"];
+  $("#lockPad").innerHTML = keys.map(k => k==="" ? '<span></span>' : '<button data-k="'+k+'" '+(k==="del"?'class="ghost" aria-label="মুছুন"':'')+'>'+(k==="del" ? '<svg class="ic" style="width:28px;height:28px"><use href="#i-back"/></svg>' : bnDigits(k))+'</button>').join("");
+  $("#lockPad").querySelectorAll("button").forEach(b=>b.onclick=()=>lockKey(b.dataset.k));
+  $("#lockForgot").onclick = () => {
+    $("#lockMsg").className = "lmsg";
+    $("#lockMsg").innerHTML = store && store.mode==="live" ? 'লগআউট করে একই Google অ্যাকাউন্ট দিয়ে আবার ঢুকলে পিন মুছে যাবে। হিসাব হারাবে না।<br><button class="forgot" style="margin-top:8px;color:#fff;font-weight:700" id="lockOut">লগআউট করুন</button>' : 'ডেমোতে পিন মুছে দেওয়া হলো।';
+    if(store && store.mode==="live") $("#lockOut").onclick = () => { pinSet(""); $("#lock").hidden = true; store.AU.signOut(store.auth); if(window.Android) Android.googleLogout(); };
+    else { pinSet(""); setTimeout(()=>{ $("#lock").hidden = true; renderPin(); }, 900); }
+  };
+}
+function renderPin(){
+  const on = !!pinGet();
+  $("#pinInfo").textContent = on ? "চালু আছে। অ্যাপ খুললে বা ২ মিনিটের বেশি বাইরে থেকে ফিরলে পিন চাইবে।" : "বন্ধ আছে। চালু করলে অ্যাপ খুলতে পিন লাগবে, দোকানের অন্য কেউ হিসাব দেখতে বা বদলাতে পারবে না।";
+  $("#pinBtns").innerHTML = on ? '<button class="btn" id="pinChange">পিন বদলান</button><button class="btn dang" id="pinOff">পিন বন্ধ করুন</button>' : '<button class="btn pri" id="pinOn">'+icon("lock","sm")+'পিন চালু করুন</button>';
+  if($("#pinOn")) $("#pinOn").onclick = () => pinSheet();
+  if($("#pinChange")) $("#pinChange").onclick = () => pinSheet();
+  if($("#pinOff")) $("#pinOff").onclick = () => pinSheet(true);
+}
+function pinSheet(turnOff){
+  const has = !!pinGet();
+  const inp = (id,l) => '<label class="f"><span>'+l+'</span><input class="field num" id="'+id+'" type="password" inputmode="numeric" maxlength="4" autocomplete="off" style="font-size:1.4rem;letter-spacing:.5em"></label>';
+  openSheet(turnOff ? "পিন বন্ধ করুন" : has ? "পিন বদলান" : "পিন চালু করুন",
+    (has ? inp("fOld","এখনকার পিন") : '') + (turnOff ? '' : inp("fP1","নতুন ৪ অঙ্কের পিন") + inp("fP2","আবার একই পিন দিন")) +
+    '<button class="save'+(turnOff?" red":"")+'" id="fSave">'+(turnOff?"পিন বন্ধ করুন":"সেভ করুন")+'</button>',
+    w => {
+      setTimeout(()=>w.querySelector("input").focus(), 60);
+      const val = id => toEn(w.querySelector("#"+id).value).replace(/\D/g,"");
+      w.querySelector("#fSave").onclick = async () => {
+        if(has && (await pinHash(val("fOld"))) !== pinGet()){ toast("এখনকার পিন ভুল"); return; }
+        if(turnOff){ pinSet(""); renderPin(); popLayer(() => toast("পিন বন্ধ হয়েছে")); return; }
+        const a = val("fP1"), b = val("fP2");
+        if(a.length!==4){ toast("৪ অঙ্কের পিন দিন"); return; }
+        if(a!==b){ toast("দুইবার একই পিন দিন"); return; }
+        pinSet(await pinHash(a)); renderPin(); popLayer(() => toast("পিন চালু হয়েছে"));
+      };
+    });
+}
+window.hkPause = () => { pausedAt = Date.now(); };
+window.hkResume = () => { if(pausedAt && Date.now()-pausedAt > 120000 && !$("#app").hidden) showLock(); pausedAt = 0; };
+document.addEventListener("visibilitychange", () => { if(document.hidden) window.hkPause(); else window.hkResume(); });
+
 let pendSince = 0, autoDiagDone = false;
 async function runDiag(auto){
   if(!store || !store.diagnose) return;
@@ -897,6 +1160,7 @@ function wireUI(){
   $("#fab").onclick = () => partySheet(null);
   $("#nudge").onclick = () => shopSheet();
   $("#payAdd").onclick = () => paySheet(null);
+  buildPad(); renderPin();
   $("#dPrev").onclick = () => { S.day = shiftDay(S.day,-1); watchDay(); };
   $("#dNext").onclick = () => { if(S.day<todayStr()){ S.day = shiftDay(S.day,1); watchDay(); } };
   $("#addSale").onclick = () => cashSheet("sale");
@@ -905,7 +1169,7 @@ function wireUI(){
   $("#diagBtn").onclick = () => runDiag(false);
   $("#expP").onclick = () => exportData("p");
   $("#expE").onclick = () => exportData("e");
-  $("#logout").onclick = () => { if(store.auth){ store.AU.signOut(store.auth); if(window.Android) Android.googleLogout(); } };
+  $("#logout").onclick = () => { if(store.auth){ pinSet(""); store.AU.signOut(store.auth); if(window.Android) Android.googleLogout(); } };
   if(window.Android){
     $("#verCard").hidden = false;
     const ver = bnDigits(Android.appVersion());
@@ -926,13 +1190,14 @@ function applyProfile(){
 
 function startApp(){
   stopApp();
+  showLock();
   $("#loading").hidden = true; $("#login").hidden = true; $("#app").hidden = false;
   $("#demoBar").hidden = store.mode!=="demo";
   $("#accCard").hidden = store.mode==="demo";
   $("#diagBtn").hidden = store.mode==="demo";
   if(S.user) $("#accInfo").textContent = "ঢুকেছেন: "+(S.user.email||S.user.displayName||"");
   unsubs.push(store.onProfile(pr => { S.profile = pr||{}; applyProfile(); if(S.pid) renderParty(); }));
-  unsubs.push(store.onParties(list => { S.parties = list; renderKhata(); if(S.pid) renderParty(); if(S.view==="day") renderDay(); }));
+  unsubs.push(store.onParties(list => { S.parties = list; renderKhata(); syncDues(); if(S.pid) renderParty(); if(S.view==="day") renderDay(); }));
   unsubs.push(store.onSync(st => { S.pending = st.pending; renderSync(); }));
   watchDay(); renderSync();
 }
