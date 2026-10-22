@@ -334,7 +334,7 @@ main{padding-bottom:calc(150px + env(safe-area-inset-bottom,0px))}
     </section>
     <section class="screen wrap" id="s-more" hidden>
       <div class="card"><h3><svg class="ic"><use href="#i-store"/></svg>দোকানের নাম</h3><p>উপরে আর তাগাদার মেসেজে এই নাম দেখাবে।</p><div class="btnrow"><input class="field" style="flex:1 1 180px;min-width:0" id="shopInput" placeholder="যেমন: মায়ের দোয়া স্টোর"><button class="btn pri" id="shopSave" style="flex:0 0 auto">সেভ</button></div></div>
-      <div class="card"><h3><svg class="ic"><use href="#i-cloud"/></svg>হিসাব কোথায় থাকে</h3><p id="syncInfo"></p><div class="status" id="syncStatus"></div></div>
+      <div class="card"><h3><svg class="ic"><use href="#i-cloud"/></svg>হিসাব কোথায় থাকে</h3><p id="syncInfo"></p><div class="status" id="syncStatus"></div><div id="diagBox" class="hint" hidden></div><button class="btn full" id="diagBtn" style="margin-top:10px" hidden>সমস্যা খুঁজুন</button></div>
       <div class="card"><h3><svg class="ic"><use href="#i-down"/></svg>হিসাব ডাউনলোড</h3><p>এক্সেলে খোলা যায় এমন ফাইল। মাঝে মাঝে নামিয়ে রাখলে বাড়তি নিরাপত্তা।</p><div class="btnrow"><button class="btn" id="expP"><svg class="ic sm"><use href="#i-users"/></svg>বাকির তালিকা</button><button class="btn" id="expE"><svg class="ic sm"><use href="#i-book"/></svg>সব লেনদেন</button></div></div>
       <div class="card" id="verCard" hidden><h3><svg class="ic"><use href="#i-upd"/></svg>অ্যাপ আপডেট</h3><p id="verInfo"></p><button class="btn full" id="verCheck">আপডেট আছে কিনা দেখুন</button></div>
       <div class="card" id="accCard"><h3><svg class="ic"><use href="#i-shield"/></svg>অ্যাকাউন্ট</h3><p id="accInfo"></p><button class="btn dang full" id="logout"><svg class="ic sm"><use href="#i-out"/></svg>লগআউট</button></div>
@@ -524,7 +524,23 @@ async function makeFirebaseStore(){
     addCash(x){ const b=F.writeBatch(fdb); b.set(F.doc(col("cash")),{...x,at:Date.now()}); run(b); },
     updateCash(o,n){ const b=F.writeBatch(fdb); b.update(F.doc(col("cash"),o.id),{t:n.t,amt:n.amt,note:n.note,date:n.date}); run(b); },
     deleteCash(o){ const b=F.writeBatch(fdb); b.delete(F.doc(col("cash"),o.id)); run(b); },
-    async exportAll(){ const [p,e,c]=await Promise.all(["parties","entries","cash"].map(n=>F.getDocs(col(n)))); return {parties:list(p),entries:list(e),cash:list(c)}; }
+    async exportAll(){ const [p,e,c]=await Promise.all(["parties","entries","cash"].map(n=>F.getDocs(col(n)))); return {parties:list(p),entries:list(e),cash:list(c)}; },
+    /* সরাসরি Firebase সার্ভারকে জিজ্ঞেস করে আসল সমস্যা বের করে */
+    async diagnose(){
+      const u = auth.currentUser;
+      if(!u) return {ok:false, msg:"লগইন করা নেই।"};
+      let tok; try { tok = await u.getIdToken(); } catch(e){ return {ok:false, msg:"Google লগইন যাচাই করা যায়নি। নেট দেখে আবার চেষ্টা করুন।", raw:String(e.code||e.message||e)}; }
+      const url = "https://firestore.googleapis.com/v1/projects/"+FIREBASE_CONFIG.projectId+"/databases/(default)/documents/users/"+u.uid;
+      let r, t;
+      try { r = await fetch(url, {headers:{Authorization:"Bearer "+tok}}); t = await r.text(); }
+      catch(e){ return {ok:false, msg:"Firebase সার্ভারে পৌঁছানো যাচ্ছে না। নেট বা ডাটা চালু আছে কিনা দেখুন।", raw:String(e)}; }
+      const raw = r.status+" "+t.slice(0,300);
+      if(/does not exist for project|database \(default\) does not exist/i.test(t)) return {ok:false, msg:"Firebase-এ ডাটাবেস (Firestore Database) এখনো বানানো হয়নি।", code:"nodb", raw};
+      if(/SERVICE_DISABLED|has not been used|is disabled/i.test(t)) return {ok:false, msg:"Firebase-এ Firestore চালু করা নেই।", code:"disabled", raw};
+      if(r.status===403 || /PERMISSION_DENIED|insufficient permissions/i.test(t)) return {ok:false, msg:"Firestore-এর Rules ঠিকমতো বসানো হয়নি।", code:"rules", raw};
+      if(r.status===200 || r.status===404) return {ok:true, msg:"Firebase সার্ভার ঠিক আছে।", raw};
+      return {ok:false, msg:"অজানা সমস্যা।", raw};
+    }
   };
 }
 
@@ -770,6 +786,19 @@ function renderSync(){
   else if(S.pending){ st.className="status wait"; st.innerHTML=icon("upd","sm")+"সেভ হচ্ছে…"; }
   else { st.className="status"; st.innerHTML=icon("cloud","sm")+"সব হিসাব অনলাইনে সেভ আছে"; }
 }
+let pendSince = 0, autoDiagDone = false;
+async function runDiag(auto){
+  if(!store || !store.diagnose) return;
+  const box = $("#diagBox"); box.hidden = false; box.textContent = "খোঁজা হচ্ছে…";
+  const d = await store.diagnose();
+  box.innerHTML = '<b style="color:'+(d.ok?"var(--give)":"var(--get)")+'">'+esc(d.msg)+'</b>'+(d.ok&&S.pending?'<br>সার্ভার ঠিক আছে, তবু সেভ আটকে আছে। অ্যাপটা পুরো বন্ধ করে আবার খুলুন।':'')+'<br><span style="font-size:.7rem;color:var(--faint);word-break:break-all">'+esc(d.raw||"")+'</span>';
+  if(auto && !d.ok){ toast(d.msg); setView("more"); }
+}
+setInterval(() => {
+  if(!store || store.mode!=="live" || !S.user) return;
+  if(S.pending && S.online){ if(!pendSince) pendSince = Date.now(); if(!autoDiagDone && Date.now()-pendSince > 15000){ autoDiagDone = true; runDiag(true); } }
+  else pendSince = 0;
+}, 3000);
 addEventListener("online", ()=>{ S.online=true; renderSync(); });
 addEventListener("offline", ()=>{ S.online=false; renderSync(); });
 
@@ -820,6 +849,7 @@ function wireUI(){
   $("#addSale").onclick = () => cashSheet("sale");
   $("#addExp").onclick = () => cashSheet("expense");
   $("#shopSave").onclick = () => { const v=$("#shopInput").value.trim(); if(!v){toast("দোকানের নাম লিখুন");return;} store.setProfile({shop:v}); $("#shopInput").blur(); toast("সেভ হয়েছে"); };
+  $("#diagBtn").onclick = () => runDiag(false);
   $("#expP").onclick = () => exportData("p");
   $("#expE").onclick = () => exportData("e");
   $("#logout").onclick = () => { if(store.auth){ store.AU.signOut(store.auth); if(window.Android) Android.googleLogout(); } };
@@ -845,6 +875,7 @@ function startApp(){
   $("#loading").hidden = true; $("#login").hidden = true; $("#app").hidden = false;
   $("#demoBar").hidden = store.mode!=="demo";
   $("#accCard").hidden = store.mode==="demo";
+  $("#diagBtn").hidden = store.mode==="demo";
   if(S.user) $("#accInfo").textContent = "ঢুকেছেন: "+(S.user.email||S.user.displayName||"");
   unsubs.push(store.onProfile(pr => { S.profile = pr||{}; applyProfile(); }));
   unsubs.push(store.onParties(list => { S.parties = list; renderKhata(); if(S.pid) renderParty(); if(S.view==="day") renderDay(); }));
