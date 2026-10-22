@@ -187,6 +187,9 @@ main{padding-bottom:calc(150px + env(safe-area-inset-bottom,0px))}
 .credit small{display:block;color:var(--on-brand-dim);font-size:.78rem}
 .credit b{display:block;font-family:var(--f-head);font-weight:700;font-size:1.25rem;line-height:1.3}
 .fbbtn{background:#fff;color:var(--brand);border-color:#fff;text-decoration:none}
+.codebox{font-family:var(--f-head);font-weight:800;font-size:1.9rem;letter-spacing:.12em;text-align:center;padding:14px;border-radius:14px;background:#FFF6E0;border:1.5px dashed #E2B54A;color:#5B4205;margin:10px 0}
+.kv{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px solid var(--line);font-size:.9rem}
+.kv span{color:var(--muted)} .kv b{font-family:var(--f-head);letter-spacing:.04em}
 .foot{text-align:center;color:var(--faint);font-size:.76rem;margin-top:18px}
 
 /* ---------- sheet ---------- */
@@ -364,6 +367,8 @@ main{padding-bottom:calc(150px + env(safe-area-inset-bottom,0px))}
         </div>
       </div></div>
       <div class="wrap">
+        <button class="nudge" id="recoverNudge" hidden style="background:#E8F3FF;border-color:#BBD8F6;color:#163E6B"><svg class="ic"><use href="#i-upd"/></svg><span><b>আগে অন্য Gmail দিয়ে ব্যবহার করেছেন?</b>মোবাইল নম্বর আর রিকভারি কোড দিয়ে আগের সব হিসাব ফেরত আনুন</span><svg class="ic sm"><use href="#i-next"/></svg></button>
+        <button class="nudge" id="recNudge" hidden><svg class="ic"><use href="#i-shield"/></svg><span><b>Gmail হারালেও হিসাব ফেরত পেতে</b>মোবাইল নম্বর দিয়ে রিকভারি চালু করুন</span><svg class="ic sm"><use href="#i-next"/></svg></button>
         <button class="nudge" id="nudge" hidden><svg class="ic"><use href="#i-store"/></svg><span><b>দোকানের নাম দিন</b>তাগাদার মেসেজে এই নাম যাবে</span><svg class="ic sm"><use href="#i-next"/></svg></button>
         <div id="dueCard" hidden></div>
         <div class="tabs" role="tablist">
@@ -388,6 +393,7 @@ main{padding-bottom:calc(150px + env(safe-area-inset-bottom,0px))}
       <div class="card"><h3><svg class="ic"><use href="#i-wallet"/></svg>পেমেন্ট নম্বর</h3><p>বিকাশ, নগদ, রকেট বা উপায় নম্বর দিন। তাগাদার মেসেজের নিচে এগুলো চলে যাবে, কাস্টমার সহজে টাকা পাঠাতে পারবে।</p><div class="paylist" id="payList"></div><button class="btn full" id="payAdd"><svg class="ic sm"><use href="#i-plus"/></svg>নম্বর যোগ করুন</button><div id="payPrev"></div></div>
       <div class="card"><h3><svg class="ic"><use href="#i-cloud"/></svg>হিসাব কোথায় থাকে</h3><p id="syncInfo"></p><div class="status" id="syncStatus"></div><div id="diagBox" class="hint" hidden></div><button class="btn full" id="diagBtn" style="margin-top:10px" hidden>সমস্যা খুঁজুন</button></div>
       <div class="card"><h3><svg class="ic"><use href="#i-down"/></svg>হিসাব ডাউনলোড</h3><p>এক্সেলে খোলা যায় এমন ফাইল। মাঝে মাঝে নামিয়ে রাখলে বাড়তি নিরাপত্তা।</p><div class="btnrow"><button class="btn" id="expP"><svg class="ic sm"><use href="#i-users"/></svg>বাকির তালিকা</button><button class="btn" id="expE"><svg class="ic sm"><use href="#i-book"/></svg>সব লেনদেন</button></div></div>
+      <div class="card" id="recCard" hidden><h3><svg class="ic"><use href="#i-shield"/></svg>Gmail হারালে হিসাব ফেরত</h3><div id="recBody"></div></div>
       <div class="card" id="bkCard"><h3><svg class="ic"><use href="#i-shield"/></svg>ব্যাকআপ</h3><p>সব হিসাব অনলাইনে তো থাকেই। বাড়তি নিরাপত্তার জন্য প্রতি সপ্তাহে ফোনের Download/HisabKhata ফোল্ডারে নিজে থেকে একটা ব্যাকআপ ফাইলও রাখা হয়।</p><div class="status" id="bkStatus"></div><div class="btnrow" style="margin-top:10px"><button class="btn" id="bkSave"><svg class="ic sm"><use href="#i-down"/></svg>এখনই ব্যাকআপ</button><button class="btn" id="bkLoad"><svg class="ic sm"><use href="#i-upd"/></svg>ফেরত আনুন</button></div><button class="btn full" id="recalcBtn" style="margin-top:8px">সব জের আবার মিলিয়ে দেখুন</button><input type="file" id="bkFile" accept=".json,application/json,text/plain,*/*" hidden></div>
       <div class="card" id="trashCard" hidden><h3><svg class="ic"><use href="#i-trash"/></svg>রিসাইকেল বিন</h3><p>মুছে ফেলা কাস্টমার আর মহাজন ৩০ দিন এখানে থাকে, তারপর একেবারে মুছে যায়।</p><div class="paylist" id="trashList"></div></div>
       <div class="card" id="pinCard"><h3><svg class="ic"><use href="#i-lock"/></svg>পিন লক</h3><p id="pinInfo"></p><div class="btnrow" id="pinBtns"></div></div>
@@ -522,6 +528,9 @@ function makeDemoStore(){
     updateParty(id,p){ Object.assign(P(id),p); save(); },
     async deleteParty(id){ Object.assign(P(id),{deleted:true,deletedAt:Date.now()}); save(); },
     restoreParty(id){ const x=P(id); delete x.deleted; delete x.deletedAt; save(); },
+    linked:false,
+    async setRecovery(phone, code, token){ db.profile.recPhone=phone; db.profile.recCode=code; db.profile.recToken=token; save(); },
+    async recover(){ return {ok:false, msg:"ডেমোতে আগের হিসাব ফেরত আনা যায় না"}; },
     async purgeParty(id){ db.parties=db.parties.filter(p=>p.id!==id); db.entries=db.entries.filter(e=>e.pid!==id); save(); },
     async restoreAll(d){
       const put = (arr, items) => items.forEach(it => { const i = arr.findIndex(x=>x.id===it.id); if(i>=0) arr[i] = c(it); else arr.push(c(it)); });
@@ -560,7 +569,8 @@ async function makeFirebaseStore(){
   if(window.Android) fsOpts.experimentalForceLongPolling = true;
   try { fdb = F.initializeFirestore(app, fsOpts); }
   catch(e){ fdb = F.getFirestore(app); }
-  let uid = null, pending = 0; const syncSubs = new Set();
+  let uid = null, authUid = null, pending = 0; const syncSubs = new Set();
+  const withTimeout = (pr, ms) => Promise.race([pr, new Promise((_,rj)=>setTimeout(()=>rj({code:"timeout"}), ms))]);
   const emit = () => syncSubs.forEach(f=>f({pending: pending>0}));
   const pend = k => { pending = Math.max(0, pending+k); emit(); };
   const col = n => F.collection(fdb,"users",uid,n);
@@ -570,7 +580,46 @@ async function makeFirebaseStore(){
   return {
     mode:"live",
     auth, AU,
-    setUser(u){ uid=u.uid; pend(1); F.waitForPendingWrites(fdb).then(()=>pend(-1)).catch(()=>pend(-1)); },
+    linked:false,
+    async setUser(u){
+      authUid = u.uid; uid = u.uid; this.linked = false;
+      const LK = "hk-link-"+authUid;
+      let link = ""; try { link = localStorage.getItem(LK) || ""; } catch(e){}
+      try {
+        const snap = await withTimeout(F.getDoc(F.doc(fdb,"users",authUid)), 8000);
+        const d = snap.exists() ? snap.data() : {};
+        link = d.dataUid || "";
+        try { if(link) localStorage.setItem(LK, link); else localStorage.removeItem(LK); } catch(e){}
+      } catch(e){}
+      if(link && link !== authUid){ uid = link; this.linked = true; }
+      pend(1); F.waitForPendingWrites(fdb).then(()=>pend(-1)).catch(()=>pend(-1));
+    },
+    /* রিকভারি চালু: recovery/{token} → এই খাতার মালিকের uid */
+    async setRecovery(phone, code, token){
+      const b = F.writeBatch(fdb);
+      const old = S.profile.recToken;
+      if(old && old !== token) b.delete(F.doc(fdb,"recovery",old));
+      b.set(F.doc(fdb,"recovery",token), {uid, at:Date.now()});
+      b.set(F.doc(fdb,"users",uid), {recPhone:phone, recCode:code, recToken:token}, {merge:true});
+      await withTimeout(b.commit(), 20000);
+    },
+    /* নতুন Gmail থেকে আগের খাতার সাথে যুক্ত হওয়া */
+    async recover(token){
+      let snap;
+      try { snap = await withTimeout(F.getDocFromServer(F.doc(fdb,"recovery",token)), 20000); }
+      catch(e){ return {ok:false, msg: e.code==="permission-denied" ? "Firebase Rules আপডেট করা হয়নি।" : "নেট সংযোগ লাগবে। নেট চালু করে আবার চেষ্টা করুন।"}; }
+      if(!snap.exists()) return {ok:false, msg:"নম্বর বা কোড মিলছে না। আবার দেখে লিখুন।"};
+      const old = snap.data().uid;
+      if(!old) return {ok:false, msg:"রিকভারির তথ্য ঠিক নেই।"};
+      if(old === uid) return {ok:true, same:true};
+      try {
+        await withTimeout(F.setDoc(F.doc(fdb,"users",old,"access",authUid), {token, at:Date.now()}), 20000);
+        await withTimeout(F.setDoc(F.doc(fdb,"users",authUid), {dataUid:old}, {merge:true}), 20000);
+      } catch(e){ return {ok:false, msg: e.code==="permission-denied" ? "Firebase Rules আপডেট করা হয়নি, অথবা কোড মিলছে না।" : "নেট সংযোগ লাগবে। নেট চালু করে আবার চেষ্টা করুন।"}; }
+      try { localStorage.setItem("hk-link-"+authUid, old); } catch(e){}
+      uid = old; this.linked = true;
+      return {ok:true};
+    },
     onSync(cb){ syncSubs.add(cb); cb({pending:pending>0}); return ()=>syncSubs.delete(cb); },
     onProfile(cb){ return F.onSnapshot(F.doc(fdb,"users",uid), s=>cb(s.data()||{}), onErr); },
     setProfile(p){ const b=F.writeBatch(fdb); b.set(F.doc(fdb,"users",uid), p, {merge:true}); run(b); },
@@ -622,7 +671,7 @@ async function makeFirebaseStore(){
       const u = auth.currentUser;
       if(!u) return {ok:false, msg:"লগইন করা নেই।"};
       let tok; try { tok = await u.getIdToken(); } catch(e){ return {ok:false, msg:"Google লগইন যাচাই করা যায়নি। নেট দেখে আবার চেষ্টা করুন।", raw:String(e.code||e.message||e)}; }
-      const url = "https://firestore.googleapis.com/v1/projects/"+FIREBASE_CONFIG.projectId+"/databases/(default)/documents/users/"+u.uid;
+      const url = "https://firestore.googleapis.com/v1/projects/"+FIREBASE_CONFIG.projectId+"/databases/(default)/documents/users/"+uid;
       let r, t;
       try { r = await fetch(url, {headers:{Authorization:"Bearer "+tok}}); t = await r.text(); }
       catch(e){ return {ok:false, msg:"Firebase সার্ভারে পৌঁছানো যাচ্ছে না। নেট বা ডাটা চালু আছে কিনা দেখুন।", raw:String(e)}; }
@@ -1244,6 +1293,74 @@ function renderTrash(){
   if(!purgeDone && store){ purgeDone = true; list.filter(p=>Date.now()-(p.deletedAt||0) > 30*864e5).forEach(p=>{ store.purgeParty(p.id).catch(()=>{}); }); }
 }
 
+/* ---------- Gmail হারালে রিকভারি ---------- */
+const REC_ABC = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
+function newRecCode(){ const a = new Uint8Array(8); try { crypto.getRandomValues(a); } catch(e){ for(let i=0;i<8;i++) a[i]=Math.floor(Math.random()*256); } return Array.from(a, x=>REC_ABC[x%REC_ABC.length]).join(""); }
+const fmtCode = c => String(c||"").replace(/(.{4})(?=.)/g, "$1-");
+const normPhone = v => { let d = toEn(v).replace(/\D/g,""); if(d.startsWith("880")) d = d.slice(2); return d; };
+const normCode = v => toEn(v).toUpperCase().replace(/[^A-Z0-9]/g,"");
+async function recToken(phone, code){
+  const txt = "hk-rec:"+phone+":"+code;
+  const d = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(txt));
+  return Array.from(new Uint8Array(d)).map(b=>b.toString(16).padStart(2,"0")).join("");
+}
+function recShareText(){ return "হিসাবের খাতা — আগের হিসাব ফেরত আনার তথ্য\nমোবাইল: "+S.profile.recPhone+"\nরিকভারি কোড: "+fmtCode(S.profile.recCode)+"\n\nনতুন Gmail দিয়ে ঢুকলে এই নম্বর আর কোড দিলে আগের সব হিসাব ফিরে আসবে। কোডটা কাউকে দেবেন না।"; }
+function renderRec(){
+  const live = store && store.mode==="live";
+  $("#recCard").hidden = false;
+  const has = !!S.profile.recToken;
+  $("#recBody").innerHTML = has
+    ? '<p>Gmail হারিয়ে নতুন Gmail দিয়ে ঢুকলে এই নম্বর আর কোড দিয়ে আগের সব হিসাব ফেরত আনা যাবে।</p><div class="kv"><span>মোবাইল</span><b>'+esc(S.profile.recPhone)+'</b></div><div class="codebox">'+esc(fmtCode(S.profile.recCode))+'</div><p style="margin-top:0">কোডটা খাতায় লিখে রাখুন অথবা নিজের WhatsApp-এ পাঠিয়ে রাখুন। কাউকে দেবেন না।</p>'+
+      '<div class="btnrow">'+(window.Android?'<button class="btn pri" id="recWa">'+icon("chat","sm")+'WhatsApp-এ সেভ করুন</button>':'')+'<button class="btn" id="recNew">নতুন কোড বানান</button></div>'
+    : '<p>Gmail হারিয়ে গেলে বা ভুলে গেলে নতুন Gmail দিয়ে ঢুকে আগের সব হিসাব ফেরত আনা যাবে। এর জন্য আগে থেকে মোবাইল নম্বর দিয়ে রিকভারি চালু করে রাখতে হবে।</p><button class="btn pri full" id="recOn">'+icon("shield","sm")+'রিকভারি চালু করুন</button>';
+  if($("#recOn")) $("#recOn").onclick = () => recSheet();
+  if($("#recNew")) $("#recNew").onclick = () => recSheet(true);
+  if($("#recWa")) $("#recWa").onclick = () => { try { Android.shareText("whatsapp", recShareText()); } catch(e){} };
+  $("#recNudge").hidden = has || !live || !S.profile.shop || !S.parties.length;
+  $("#recoverNudge").hidden = !live || store.linked || S.parties.length>0 || (S.trash||[]).length>0 || !!S.profile.shop;
+}
+function recSheet(renew){
+  openSheet(renew ? "নতুন রিকভারি কোড" : "রিকভারি চালু করুন",
+    '<p class="hint" style="margin:-6px 2px 12px">'+(renew?"নতুন কোড বানালে আগের কোড আর কাজ করবে না।":"দোকানদারের নিজের মোবাইল নম্বর দিন। অ্যাপ একটা গোপন কোড বানিয়ে দেবে। নম্বর আর কোড দুটো মিললেই কেবল আগের হিসাব ফেরত আসবে।")+'</p>'+
+    '<label class="f"><span>মোবাইল নম্বর</span><input class="field" id="fRecPhone" inputmode="tel" autocomplete="off" value="'+esc(S.profile.recPhone||"")+'" placeholder="01XXXXXXXXX"></label>'+
+    '<button class="save" id="fSave">কোড বানান</button>',
+    w => {
+      setTimeout(()=>w.querySelector("#fRecPhone").focus(), 60);
+      w.querySelector("#fSave").onclick = async () => {
+        const phone = normPhone(w.querySelector("#fRecPhone").value);
+        if(!/^01\d{9}$/.test(phone)){ toast("সঠিক ১১ অঙ্কের মোবাইল নম্বর লিখুন"); return; }
+        const btn = w.querySelector("#fSave"); btn.disabled = true; btn.textContent = "বানানো হচ্ছে…";
+        const code = newRecCode();
+        try {
+          await store.setRecovery(phone, code, await recToken(phone, code));
+          popLayer(() => { toast("রিকভারি চালু হয়েছে"); setView("more"); setTimeout(()=>document.getElementById("recCard").scrollIntoView({block:"center"}), 80); });
+        } catch(e){
+          btn.disabled = false; btn.textContent = "আবার চেষ্টা করুন";
+          toast(e && e.code==="permission-denied" ? "Firebase Rules আপডেট করা হয়নি" : "নেট সংযোগ লাগবে, নেট চালু করে আবার চেষ্টা করুন");
+        }
+      };
+    });
+}
+function recoverSheet(){
+  openSheet("আগের হিসাব ফেরত আনুন",
+    '<p class="hint" style="margin:-6px 2px 12px">আগের Gmail-এ রিকভারি চালু করার সময় যে মোবাইল নম্বর দিয়েছিলেন আর যে কোড পেয়েছিলেন, সেগুলো লিখুন।</p>'+
+    '<label class="f"><span>মোবাইল নম্বর</span><input class="field" id="fRecPhone" inputmode="tel" autocomplete="off" placeholder="01XXXXXXXXX"></label>'+
+    '<label class="f"><span>রিকভারি কোড</span><input class="field num" id="fRecCode" autocomplete="off" autocapitalize="characters" placeholder="XXXX-XXXX" style="font-size:1.3rem;letter-spacing:.12em;text-transform:uppercase"></label>'+
+    '<button class="save" id="fSave">হিসাব ফেরত আনুন</button>',
+    w => {
+      setTimeout(()=>w.querySelector("#fRecPhone").focus(), 60);
+      w.querySelector("#fSave").onclick = async () => {
+        const phone = normPhone(w.querySelector("#fRecPhone").value), code = normCode(w.querySelector("#fRecCode").value);
+        if(!/^01\d{9}$/.test(phone)){ toast("সঠিক ১১ অঙ্কের মোবাইল নম্বর লিখুন"); return; }
+        if(code.length !== 8){ toast("৮ অক্ষরের রিকভারি কোড লিখুন"); return; }
+        const btn = w.querySelector("#fSave"); btn.disabled = true; btn.textContent = "খোঁজা হচ্ছে…";
+        const r = await store.recover(await recToken(phone, code));
+        if(!r.ok){ btn.disabled = false; btn.textContent = "আবার চেষ্টা করুন"; toast(r.msg); return; }
+        popLayer(() => { startApp(); toast(r.same ? "এই খাতাই আপনার আগের খাতা" : "আগের সব হিসাব ফিরে এসেছে"); });
+      };
+    });
+}
+
 function logoutNow(){ pinSet(""); store.AU.signOut(store.auth); if(window.Android) Android.googleLogout(); }
 
 /* ---------- পাতা বদল ---------- */
@@ -1282,6 +1399,8 @@ function wireUI(){
     } else logoutNow();
   };
   $("#bkSave").onclick = () => backupNow(false);
+  $("#recNudge").onclick = () => recSheet();
+  $("#recoverNudge").onclick = () => recoverSheet();
   $("#bkLoad").onclick = () => { $("#bkFile").value = ""; $("#bkFile").click(); };
   $("#bkFile").onchange = ev => { const f = ev.target.files && ev.target.files[0]; if(f) readBackupFile(f); };
   $("#recalcBtn").onclick = () => recalcNow();
@@ -1300,6 +1419,7 @@ function applyProfile(){
   $("#shopName").textContent = shop || "আমার দোকান";
   $("#shopAv").textContent = initial(shop || "দোকান");
   $("#nudge").hidden = !!shop || store.mode==="demo";
+  renderRec();
   if(document.activeElement!==$("#shopInput")) $("#shopInput").value = shop;
 }
 
@@ -1310,11 +1430,11 @@ function startApp(){
   $("#demoBar").hidden = store.mode!=="demo";
   $("#accCard").hidden = store.mode==="demo";
   $("#diagBtn").hidden = store.mode==="demo";
-  if(S.user) $("#accInfo").textContent = "ঢুকেছেন: "+(S.user.email||S.user.displayName||"");
+  if(S.user) $("#accInfo").textContent = "ঢুকেছেন: "+(S.user.email||S.user.displayName||"")+(store.linked?" (আগের খাতার সাথে যুক্ত)":"");
   unsubs.push(store.onProfile(pr => { S.profile = pr||{}; applyProfile(); if(S.pid) renderParty(); }));
   unsubs.push(store.onParties(list => {
     S.parties = list.filter(p=>!p.deleted); S.trash = list.filter(p=>p.deleted);
-    renderKhata(); syncDues(); renderTrash();
+    renderKhata(); syncDues(); renderTrash(); renderRec();
     if(S.pid) renderParty(); if(S.view==="day") renderDay();
   }));
   renderBk();
@@ -1382,7 +1502,7 @@ async function boot(){
     };
   }
   AU.onAuthStateChanged(auth, user => {
-    if(user){ S.user = user; store.setUser(user); startApp(); }
+    if(user){ S.user = user; store.setUser(user).then(startApp, startApp); }
     else {
       S.user = null; stopApp();
       while(layers.length) layers.pop()();

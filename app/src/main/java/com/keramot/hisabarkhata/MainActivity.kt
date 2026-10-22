@@ -163,6 +163,7 @@ class MainActivity : ComponentActivity() {
         val (label, pkgs) = when (target) {
             "imo" -> "IMO" to listOf("com.imo.android.imoim", "com.imo.android.imoimlite", "com.imo.android.imoimbeta")
             "messenger" -> "Messenger" to listOf("com.facebook.orca", "com.facebook.mlite")
+            "whatsapp" -> "WhatsApp" to listOf("com.whatsapp", "com.whatsapp.w4b")
             else -> "" to emptyList()
         }
         val base = Intent(Intent.ACTION_SEND).setType("text/plain").putExtra(Intent.EXTRA_TEXT, text)
