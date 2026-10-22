@@ -12,4 +12,7 @@
 3. `RELEASE_NOTES.md`-এর প্রথম লাইনে কী বদলেছে লেখো (এটাই নোটিফিকেশনে দেখাবে)
 4. main-এ push করলে GitHub নিজেই APK বানিয়ে Releases-এ দেবে
 
+## সাইনিং কী
+কী এনক্রিপ্ট করা অবস্থায় `app/release.jks.enc`-এ আছে। খোলার পাসওয়ার্ড শুধু GitHub Secret `KEYSTORE_PASSWORD`-এ থাকে, রিপোতে কোথাও নেই।
+
 সর্বশেষ APK: [Releases](https://github.com/fbkeramot-wq/hisab-ar-khata/releases/latest)

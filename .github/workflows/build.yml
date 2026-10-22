@@ -23,10 +23,21 @@ jobs:
         with:
           gradle-version: '8.7'
 
+      - name: Unlock signing key
+        env:
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+        run: |
+          if [ -z "$KEYSTORE_PASSWORD" ]; then echo "::error::KEYSTORE_PASSWORD secret নেই। GitHub → Settings → Secrets and variables → Actions-এ যোগ করুন।"; exit 1; fi
+          openssl enc -d -aes-256-cbc -pbkdf2 -iter 200000 -in app/release.jks.enc -out app/release.jks -pass env:KEYSTORE_PASSWORD
+
       - name: Build APK
         env:
-          KEYSTORE_PASSWORD: hisabkhata2026
-        run: gradle :app:assembleRelease --no-daemon --stacktrace
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+        run: gradle :app:assembleRelease --no-daemon
+
+      - name: Remove key from runner
+        if: always()
+        run: rm -f app/release.jks
 
       - name: Read version
         id: v

@@ -373,6 +373,8 @@ main{padding-bottom:calc(150px + env(safe-area-inset-bottom,0px))}
       <div class="card"><h3><svg class="ic"><use href="#i-wallet"/></svg>পেমেন্ট নম্বর</h3><p>বিকাশ, নগদ, রকেট বা উপায় নম্বর দিন। তাগাদার মেসেজের নিচে এগুলো চলে যাবে, কাস্টমার সহজে টাকা পাঠাতে পারবে।</p><div class="paylist" id="payList"></div><button class="btn full" id="payAdd"><svg class="ic sm"><use href="#i-plus"/></svg>নম্বর যোগ করুন</button><div id="payPrev"></div></div>
       <div class="card"><h3><svg class="ic"><use href="#i-cloud"/></svg>হিসাব কোথায় থাকে</h3><p id="syncInfo"></p><div class="status" id="syncStatus"></div><div id="diagBox" class="hint" hidden></div><button class="btn full" id="diagBtn" style="margin-top:10px" hidden>সমস্যা খুঁজুন</button></div>
       <div class="card"><h3><svg class="ic"><use href="#i-down"/></svg>হিসাব ডাউনলোড</h3><p>এক্সেলে খোলা যায় এমন ফাইল। মাঝে মাঝে নামিয়ে রাখলে বাড়তি নিরাপত্তা।</p><div class="btnrow"><button class="btn" id="expP"><svg class="ic sm"><use href="#i-users"/></svg>বাকির তালিকা</button><button class="btn" id="expE"><svg class="ic sm"><use href="#i-book"/></svg>সব লেনদেন</button></div></div>
+      <div class="card" id="bkCard"><h3><svg class="ic"><use href="#i-shield"/></svg>ব্যাকআপ</h3><p>সব হিসাব অনলাইনে তো থাকেই। বাড়তি নিরাপত্তার জন্য প্রতি সপ্তাহে ফোনের Download/HisabKhata ফোল্ডারে নিজে থেকে একটা ব্যাকআপ ফাইলও রাখা হয়।</p><div class="status" id="bkStatus"></div><div class="btnrow" style="margin-top:10px"><button class="btn" id="bkSave"><svg class="ic sm"><use href="#i-down"/></svg>এখনই ব্যাকআপ</button><button class="btn" id="bkLoad"><svg class="ic sm"><use href="#i-upd"/></svg>ফেরত আনুন</button></div><button class="btn full" id="recalcBtn" style="margin-top:8px">সব জের আবার মিলিয়ে দেখুন</button><input type="file" id="bkFile" accept=".json,application/json,text/plain,*/*" hidden></div>
+      <div class="card" id="trashCard" hidden><h3><svg class="ic"><use href="#i-trash"/></svg>রিসাইকেল বিন</h3><p>মুছে ফেলা কাস্টমার আর মহাজন ৩০ দিন এখানে থাকে, তারপর একেবারে মুছে যায়।</p><div class="paylist" id="trashList"></div></div>
       <div class="card" id="pinCard"><h3><svg class="ic"><use href="#i-lock"/></svg>পিন লক</h3><p id="pinInfo"></p><div class="btnrow" id="pinBtns"></div></div>
       <div class="card" id="verCard" hidden><h3><svg class="ic"><use href="#i-upd"/></svg>অ্যাপ আপডেট</h3><p id="verInfo"></p><button class="btn full" id="verCheck">আপডেট আছে কিনা দেখুন</button></div>
       <div class="card" id="accCard"><h3><svg class="ic"><use href="#i-shield"/></svg>অ্যাকাউন্ট</h3><p id="accInfo"></p><button class="btn dang full" id="logout"><svg class="ic sm"><use href="#i-out"/></svg>লগআউট</button></div>
@@ -502,14 +504,27 @@ function makeDemoStore(){
     onDay(date,cb){ return sub(()=>cb({cash:c(db.cash.filter(x=>x.date===date)), entries:c(db.entries.filter(e=>e.date===date))})); },
     addParty(p, open){ const id=uid(), now=Date.now(); db.parties.push({id,...p,bal:0,createdAt:now,lastAt:now}); if(open&&open.amt){ const e={id:uid(),pid:id,t:open.t,amt:open.amt,note:"আগের হিসাব",date:todayStr(),at:now}; db.entries.push(e); P(id).bal+=eff(e); } save(); return id; },
     updateParty(id,p){ Object.assign(P(id),p); save(); },
-    async deleteParty(id){ db.parties=db.parties.filter(p=>p.id!==id); db.entries=db.entries.filter(e=>e.pid!==id); save(); },
+    async deleteParty(id){ Object.assign(P(id),{deleted:true,deletedAt:Date.now()}); save(); },
+    restoreParty(id){ const x=P(id); delete x.deleted; delete x.deletedAt; save(); },
+    async purgeParty(id){ db.parties=db.parties.filter(p=>p.id!==id); db.entries=db.entries.filter(e=>e.pid!==id); save(); },
+    async restoreAll(d){
+      const put = (arr, items) => items.forEach(it => { const i = arr.findIndex(x=>x.id===it.id); if(i>=0) arr[i] = c(it); else arr.push(c(it)); });
+      put(db.parties, d.parties); put(db.entries, d.entries); put(db.cash, d.cash);
+      if(d.profile) Object.assign(db.profile, d.profile);
+      save();
+    },
+    async recalc(){
+      const sum = {}; db.entries.forEach(e=>{ sum[e.pid] = (sum[e.pid]||0) + eff(e); });
+      let n = 0; db.parties.forEach(p=>{ const v = Math.round((sum[p.id]||0)*100)/100; if(Math.abs((p.bal||0)-v) > 0.004){ p.bal = v; n++; } });
+      if(n) save(); return n;
+    },
     addEntry(e){ const now=Date.now(); db.entries.push({...e,id:uid(),at:now}); const p=P(e.pid); p.bal+=eff(e); p.lastAt=now; save(); },
     updateEntry(o,n){ const x=db.entries.find(e=>e.id===o.id); Object.assign(x,{t:n.t,amt:n.amt,note:n.note,date:n.date}); const p=P(o.pid); p.bal+=eff(n)-eff(o); p.lastAt=Date.now(); save(); },
     deleteEntry(o){ db.entries=db.entries.filter(e=>e.id!==o.id); const p=P(o.pid); if(p) p.bal-=eff(o); save(); },
     addCash(x){ db.cash.push({...x,id:uid(),at:Date.now()}); save(); },
     updateCash(o,n){ Object.assign(db.cash.find(x=>x.id===o.id),{t:n.t,amt:n.amt,note:n.note,date:n.date}); save(); },
     deleteCash(o){ db.cash=db.cash.filter(x=>x.id!==o.id); save(); },
-    async exportAll(){ return c({parties:db.parties,entries:db.entries,cash:db.cash}); }
+    async exportAll(){ return c({profile:db.profile,parties:db.parties,entries:db.entries,cash:db.cash}); }
   };
 }
 
@@ -559,7 +574,22 @@ async function makeFirebaseStore(){
       b.set(ref,{...p,bal,createdAt:now,lastAt:now}); run(b); return ref.id;
     },
     updateParty(id,p){ const b=F.writeBatch(fdb); b.update(F.doc(col("parties"),id),p); run(b); },
-    async deleteParty(id){
+    async deleteParty(id){ const b=F.writeBatch(fdb); b.update(F.doc(col("parties"),id),{deleted:true,deletedAt:Date.now()}); run(b); },
+    restoreParty(id){ const b=F.writeBatch(fdb); b.update(F.doc(col("parties"),id),{deleted:F.deleteField(),deletedAt:F.deleteField()}); run(b); },
+    async restoreAll(d){
+      const ops = [];
+      [["parties",d.parties],["entries",d.entries],["cash",d.cash]].forEach(([n,items]) => items.forEach(it => { const {id, ...rest} = it; if(id) ops.push([F.doc(col(n),String(id)), rest]); }));
+      for(let i=0;i<ops.length;i+=400){ const b=F.writeBatch(fdb); ops.slice(i,i+400).forEach(([r,v])=>b.set(r,v)); run(b); }
+      if(d.profile){ const b=F.writeBatch(fdb); b.set(F.doc(fdb,"users",uid), d.profile, {merge:true}); run(b); }
+    },
+    async recalc(){
+      const [ps, es] = await Promise.all([F.getDocs(col("parties")), F.getDocs(col("entries"))]);
+      const sum = {}; list(es).forEach(e=>{ sum[e.pid] = (sum[e.pid]||0) + eff(e); });
+      const fix = list(ps).filter(p => Math.abs((p.bal||0) - Math.round((sum[p.id]||0)*100)/100) > 0.004);
+      for(let i=0;i<fix.length;i+=400){ const b=F.writeBatch(fdb); fix.slice(i,i+400).forEach(p=>b.update(F.doc(col("parties"),p.id),{bal:Math.round((sum[p.id]||0)*100)/100})); run(b); }
+      return fix.length;
+    },
+    async purgeParty(id){
       const s = await F.getDocs(F.query(col("entries"),F.where("pid","==",id)));
       const refs = s.docs.map(d=>d.ref); refs.push(F.doc(col("parties"),id));
       for(let i=0;i<refs.length;i+=450){ const b=F.writeBatch(fdb); refs.slice(i,i+450).forEach(r=>b.delete(r)); run(b); }
@@ -570,7 +600,7 @@ async function makeFirebaseStore(){
     addCash(x){ const b=F.writeBatch(fdb); b.set(F.doc(col("cash")),{...x,at:Date.now()}); run(b); },
     updateCash(o,n){ const b=F.writeBatch(fdb); b.update(F.doc(col("cash"),o.id),{t:n.t,amt:n.amt,note:n.note,date:n.date}); run(b); },
     deleteCash(o){ const b=F.writeBatch(fdb); b.delete(F.doc(col("cash"),o.id)); run(b); },
-    async exportAll(){ const [p,e,c]=await Promise.all(["parties","entries","cash"].map(n=>F.getDocs(col(n)))); return {parties:list(p),entries:list(e),cash:list(c)}; },
+    async exportAll(){ const [p,e,c]=await Promise.all(["parties","entries","cash"].map(n=>F.getDocs(col(n)))); return {profile:S.profile,parties:list(p),entries:list(e),cash:list(c)}; },
     /* সরাসরি Firebase সার্ভারকে জিজ্ঞেস করে আসল সমস্যা বের করে */
     async diagnose(){
       const u = auth.currentUser;
@@ -806,7 +836,7 @@ function partySheet(p){
         } else { store.updateParty(p.id, data); popLayer(() => toast("বদলানো হয়েছে")); }
       };
       const del = w.querySelector("#fDel");
-      if(del) del.onclick = () => confirmBox(w, p.name+" আর তার সব লেনদেন একেবারে মুছে যাবে। নিশ্চিত?", async () => {
+      if(del) del.onclick = () => confirmBox(w, p.name+" রিসাইকেল বিনে যাবে। ৩০ দিনের মধ্যে আরও পাতা থেকে ফেরত আনা যাবে।", async () => {
         try { await store.deleteParty(p.id); } catch(e){ toast("মুছতে নেট লাগবে, পরে চেষ্টা করুন"); return; }
         popTo(S.pid===p.id ? S.pvDepth : layers.length-1, () => toast("মুছে ফেলা হয়েছে"));
       });
@@ -992,7 +1022,7 @@ function renderDay(){
   const t = todayStr();
   $("#dLabel").innerHTML = dayWord(S.day)+'<small>'+bnDate(S.day,true)+'</small>';
   $("#dNext").disabled = S.day>=t;
-  const {cash, entries} = S.dayData;
+  const cash = S.dayData.cash, entries = S.dayData.entries.filter(e=>partyById(e.pid));
   const sum = f => cash.filter(f).reduce((a,x)=>a+x.amt,0);
   const sale = sum(x=>x.t==="sale"), exp = sum(x=>x.t==="expense");
   const kindOf = e => (partyById(e.pid)||{}).kind || "customer";
@@ -1128,6 +1158,8 @@ function csvDownload(name, rows){
 }
 async function exportData(which){
   let d; try { d = await store.exportAll(); } catch(e){ toast("ডাউনলোড করতে নেট লাগবে"); return; }
+  d.parties = d.parties.filter(p=>!p.deleted);
+  d.entries = d.entries.filter(e=>d.parties.some(p=>p.id===e.pid));
   const pn = id => (d.parties.find(p=>p.id===id)||{}).name||"";
   if(which==="p"){
     csvDownload("baki-talika-"+todayStr()+".csv", [["নাম","মোবাইল","ধরন","পাবো","দেবো"], ...d.parties.sort((a,b)=>(b.bal||0)-(a.bal||0)).map(p=>[p.name,p.phone||"",kindName(p.kind),p.bal>0?p.bal:"",p.bal<0?-p.bal:""])]);
@@ -1139,6 +1171,64 @@ async function exportData(which){
     csvDownload("sob-hisab-"+todayStr()+".csv", [["তারিখ","নাম","ধরন","দিলাম","পেলাম","নগদ বেচা","খরচ","বিবরণ"], ...rows]);
   }
 }
+
+/* ---------- ব্যাকআপ ---------- */
+const BK_KEY = "hk-autobk-v1";
+const bkLast = () => { try { return +localStorage.getItem(BK_KEY) || 0; } catch(e){ return 0; } };
+function renderBk(){
+  const t = bkLast(), st = $("#bkStatus");
+  if(!window.Android){ st.className = "status wait"; st.innerHTML = icon("shield","sm")+"ফোনের অ্যাপে অটো ব্যাকআপ চলে"; return; }
+  if(t){ st.className = "status"; st.innerHTML = icon("shield","sm")+"শেষ ব্যাকআপ: "+ago(t); }
+  else { st.className = "status wait"; st.innerHTML = icon("shield","sm")+"এখনো কোনো ব্যাকআপ নেওয়া হয়নি"; }
+}
+async function backupNow(auto){
+  let d; try { d = await store.exportAll(); } catch(e){ if(!auto) toast("ব্যাকআপ নিতে নেট লাগবে"); return; }
+  if(auto && !d.parties.length && !d.cash.length) return;
+  const json = JSON.stringify({app:"hisab-khata", v:1, at:Date.now(), ...d});
+  const name = "hisab-backup-"+todayStr()+".json";
+  if(window.Android && Android.saveFile) Android.saveFile(name, json);
+  else { const a=document.createElement("a"); a.href=URL.createObjectURL(new Blob([json],{type:"application/json"})); a.download=name; document.body.appendChild(a); a.click(); setTimeout(()=>{URL.revokeObjectURL(a.href); a.remove();},1500); }
+  try { localStorage.setItem(BK_KEY, String(Date.now())); } catch(e){}
+  renderBk();
+}
+function readBackupFile(file){
+  const r = new FileReader();
+  r.onload = () => {
+    let d; try { d = JSON.parse(r.result); } catch(e){ toast("এটা হিসাবের খাতার ব্যাকআপ ফাইল না"); return; }
+    if(!d || d.app!=="hisab-khata" || !Array.isArray(d.parties) || !Array.isArray(d.entries) || !Array.isArray(d.cash)){ toast("এটা হিসাবের খাতার ব্যাকআপ ফাইল না"); return; }
+    openSheet("ব্যাকআপ থেকে ফেরত আনা",
+      '<div class="preview" style="margin-top:0">ফাইলের তারিখ: '+(d.at?bnDate(ymd(new Date(d.at)),true):"অজানা")+'\nকাস্টমার/মহাজন: '+bnNum(d.parties.filter(p=>!p.deleted).length)+' জন\nলেনদেন: '+bnNum(d.entries.length)+' টি\nদৈনিক হিসাব: '+bnNum(d.cash.length)+' টি</div>'+
+      '<p class="hint" style="margin:12px 2px 14px">ফাইলের সব হিসাব খাতায় ফেরত আসবে। খাতায় একই হিসাব থাকলে সেটা ফাইলের মতো হয়ে যাবে। ব্যাকআপের পরে নতুন যা লিখেছেন, তা মুছবে না।</p>'+
+      '<button class="save" id="fSave">ফেরত আনুন</button>',
+      w => {
+        w.querySelector("#fSave").onclick = async () => {
+          w.querySelector("#fSave").disabled = true; w.querySelector("#fSave").textContent = "ফেরত আনা হচ্ছে…";
+          try { await store.restoreAll(d); await store.recalc(); popLayer(() => toast("ব্যাকআপ থেকে সব হিসাব ফেরত এসেছে")); }
+          catch(e){ toast("ফেরত আনা যায়নি: "+(e.code||e.message||e)); w.querySelector("#fSave").disabled = false; w.querySelector("#fSave").textContent = "আবার চেষ্টা করুন"; }
+        };
+      });
+  };
+  r.onerror = () => toast("ফাইল পড়া যায়নি");
+  r.readAsText(file);
+}
+async function recalcNow(){
+  toast("মিলিয়ে দেখা হচ্ছে…");
+  try { const n = await store.recalc(); toast(n ? bnNum(n)+" জনের জের ঠিক করা হয়েছে" : "সব জের ঠিক আছে"); }
+  catch(e){ toast("মিলিয়ে দেখতে নেট লাগবে"); }
+}
+
+/* ---------- রিসাইকেল বিন ---------- */
+let purgeDone = false;
+function renderTrash(){
+  const list = (S.trash||[]).slice().sort((a,b)=>(b.deletedAt||0)-(a.deletedAt||0));
+  $("#trashCard").hidden = !list.length;
+  $("#trashList").innerHTML = list.map(p=>{ const left = Math.max(0, 30 - Math.floor((Date.now()-(p.deletedAt||0))/864e5)); const b = balInfo(p.bal||0);
+    return '<div class="payrow"><span class="av sm" '+avStyle(p.name)+'>'+esc(initial(p.name))+'</span><span class="mid"><b style="font-size:.95rem">'+esc(p.name)+'</b><span class="sub">'+kindName(p.kind)+' · '+b.amt+(b.cls==="zero"?"":" "+b.lbl)+' · আর '+bnNum(left)+' দিন</span></span><button class="btn" data-restore="'+esc(p.id)+'" style="padding:8px 12px">ফেরত আনুন</button></div>'; }).join("");
+  $("#trashList").querySelectorAll("[data-restore]").forEach(b=>b.onclick=()=>{ store.restoreParty(b.dataset.restore); toast("ফেরত আনা হয়েছে"); });
+  if(!purgeDone && store){ purgeDone = true; list.filter(p=>Date.now()-(p.deletedAt||0) > 30*864e5).forEach(p=>{ store.purgeParty(p.id).catch(()=>{}); }); }
+}
+
+function logoutNow(){ pinSet(""); store.AU.signOut(store.auth); if(window.Android) Android.googleLogout(); }
 
 /* ---------- পাতা বদল ---------- */
 const VIEW_SUB = {khata:"বাকির খাতা", day:"দৈনিক হিসাব", more:"সেটিংস"};
@@ -1169,7 +1259,16 @@ function wireUI(){
   $("#diagBtn").onclick = () => runDiag(false);
   $("#expP").onclick = () => exportData("p");
   $("#expE").onclick = () => exportData("e");
-  $("#logout").onclick = () => { if(store.auth){ pinSet(""); store.AU.signOut(store.auth); if(window.Android) Android.googleLogout(); } };
+  $("#logout").onclick = () => {
+    if(!store.auth) return;
+    if(S.pending || !S.online){
+      openSheet("লগআউট করবেন?", '<div class="confirm" style="margin-top:0">কিছু হিসাব এখনো অনলাইনে ওঠেনি। এখন লগআউট করলে সেগুলো হারিয়ে যেতে পারে। নেট চালু রেখে উপরের চিপে "সব সেভ হয়েছে" না আসা পর্যন্ত অপেক্ষা করুন।</div><button class="save red" id="fSave" style="margin-top:14px">তবুও লগআউট করুন</button>', w => { w.querySelector("#fSave").onclick = () => { popLayer(); logoutNow(); }; });
+    } else logoutNow();
+  };
+  $("#bkSave").onclick = () => backupNow(false);
+  $("#bkLoad").onclick = () => { $("#bkFile").value = ""; $("#bkFile").click(); };
+  $("#bkFile").onchange = ev => { const f = ev.target.files && ev.target.files[0]; if(f) readBackupFile(f); };
+  $("#recalcBtn").onclick = () => recalcNow();
   if(window.Android){
     $("#verCard").hidden = false;
     const ver = bnDigits(Android.appVersion());
@@ -1197,7 +1296,13 @@ function startApp(){
   $("#diagBtn").hidden = store.mode==="demo";
   if(S.user) $("#accInfo").textContent = "ঢুকেছেন: "+(S.user.email||S.user.displayName||"");
   unsubs.push(store.onProfile(pr => { S.profile = pr||{}; applyProfile(); if(S.pid) renderParty(); }));
-  unsubs.push(store.onParties(list => { S.parties = list; renderKhata(); syncDues(); if(S.pid) renderParty(); if(S.view==="day") renderDay(); }));
+  unsubs.push(store.onParties(list => {
+    S.parties = list.filter(p=>!p.deleted); S.trash = list.filter(p=>p.deleted);
+    renderKhata(); syncDues(); renderTrash();
+    if(S.pid) renderParty(); if(S.view==="day") renderDay();
+  }));
+  renderBk();
+  setTimeout(() => { if(window.Android && store && Date.now()-bkLast() > 7*864e5) backupNow(true); }, 8000);
   unsubs.push(store.onSync(st => { S.pending = st.pending; renderSync(); }));
   watchDay(); renderSync();
 }

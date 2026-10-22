@@ -20,6 +20,8 @@ import android.webkit.WebResourceResponse
 import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import android.webkit.WebChromeClient
+import android.webkit.ValueCallback
 import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
@@ -52,6 +54,11 @@ class MainActivity : ComponentActivity() {
 
     private val apkFile by lazy { File(File(cacheDir, "update").apply { mkdirs() }, "HisabKhata.apk") }
     private val askNotif = registerForActivityResult(ActivityResultContracts.RequestPermission()) {}
+    private var fileCb: ValueCallback<Array<Uri>>? = null
+    private val pickFile = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { r ->
+        val cb = fileCb; fileCb = null
+        cb?.onReceiveValue(WebChromeClient.FileChooserParams.parseResult(r.resultCode, r.data))
+    }
 
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -76,6 +83,14 @@ class MainActivity : ComponentActivity() {
             setSupportMultipleWindows(false)
         }
 
+        web.webChromeClient = object : WebChromeClient() {
+            override fun onShowFileChooser(view: WebView, cb: ValueCallback<Array<Uri>>, params: FileChooserParams): Boolean {
+                fileCb?.onReceiveValue(null)
+                fileCb = cb
+                val i = Intent(Intent.ACTION_GET_CONTENT).addCategory(Intent.CATEGORY_OPENABLE).setType("*/*")
+                return try { pickFile.launch(i); true } catch (_: Exception) { fileCb = null; false }
+            }
+        }
         web.webViewClient = object : WebViewClient() {
             override fun shouldInterceptRequest(view: WebView, request: WebResourceRequest): WebResourceResponse? =
                 loader.shouldInterceptRequest(request.url)
@@ -238,7 +253,7 @@ class MainActivity : ComponentActivity() {
             if (Build.VERSION.SDK_INT >= 29) {
                 val v = ContentValues().apply {
                     put(MediaStore.Downloads.DISPLAY_NAME, name)
-                    put(MediaStore.Downloads.MIME_TYPE, "text/csv")
+                    put(MediaStore.Downloads.MIME_TYPE, if (name.endsWith(".json")) "application/json" else "text/csv")
                     put(MediaStore.Downloads.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS + "/HisabKhata")
                 }
                 val uri = contentResolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, v) ?: throw Exception("no uri")

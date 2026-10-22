@@ -3,7 +3,6 @@ build/
 app/build/
 local.properties
 *.jks
-!app/release.jks
 *.keystore
 .idea/
 *.iml
