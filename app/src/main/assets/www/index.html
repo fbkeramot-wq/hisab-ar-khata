@@ -3,241 +3,354 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#7A1F24">
+<meta name="theme-color" content="#0A5A4E">
 </head>
 <body>
 <title>হিসাবের খাতা</title>
 <link rel="stylesheet" href="fonts/fonts.css">
 <style>
-/* Layout: one-column phone app — maroon "hal khata" cover bar on top, ruled ledger pages below, bottom tab bar */
+/* Layout: one-column phone app — deep-teal header band, white cards floating over a cool grey page, fixed bottom nav */
 :root{
-  --bg:#ECEFEA; --paper:#FBFBF7; --ink:#1B2421; --muted:#5C6964; --line:#D5DCD6; --rule:#E7B9B4;
-  --cover:#7A1F24; --cover-ink:#F6E6C4; --get:#B3261E; --get-soft:#F6E1DE; --give:#1F7A4D; --give-soft:#DDF0E5;
-  --chip:#E2E7E2; --shadow:0 1px 2px rgba(20,30,25,.08),0 6px 18px rgba(20,30,25,.06);
-  --f-body:"Hind Siliguri","Noto Sans Bengali","Nirmala UI",system-ui,sans-serif;
-  --f-display:"Tiro Bangla","Noto Serif Bengali","Hind Siliguri",serif;
+  --bg:#EEF2F1; --card:#FFFFFF; --ink:#12201C; --muted:#5B6B66; --faint:#8D9A96; --line:#E1E7E5; --field:#F5F8F7;
+  --brand:#0A5A4E; --brand-2:#0E7565; --brand-deep:#073F37; --brand-soft:#E2F0EC; --on-brand:#FFFFFF; --on-brand-dim:rgba(255,255,255,.72);
+  --get:#C8372B; --get-soft:#FCEBE9; --get-line:#F5D0CB;
+  --give:#0D7F4F; --give-soft:#E1F3E9; --give-line:#C3E6D2;
+  --gold:#F3B53F;
+  --shadow:0 1px 2px rgba(8,40,34,.05),0 6px 20px rgba(8,40,34,.07);
+  --shadow-lg:0 10px 30px rgba(8,40,34,.18);
+  --f-body:"Noto Sans Bengali","Hind Siliguri","Nirmala UI",system-ui,sans-serif;
+  --f-head:"Anek Bangla","Noto Sans Bengali","Nirmala UI",system-ui,sans-serif;
+  color-scheme:light;
 }
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#111614; --paper:#191F1C; --ink:#E5ECE8; --muted:#97A59F; --line:#2B3431; --rule:#4A2A2A;
-  --cover:#5B171B; --cover-ink:#F0DCB2; --get:#F08A80; --get-soft:#3A2220; --give:#6CCB97; --give-soft:#1C3328;
-  --chip:#252D2A; --shadow:0 1px 2px rgba(0,0,0,.4); color-scheme:dark}}
-:root[data-theme="dark"]{
-  --bg:#111614; --paper:#191F1C; --ink:#E5ECE8; --muted:#97A59F; --line:#2B3431; --rule:#4A2A2A;
-  --cover:#5B171B; --cover-ink:#F0DCB2; --get:#F08A80; --get-soft:#3A2220; --give:#6CCB97; --give-soft:#1C3328;
-  --chip:#252D2A; --shadow:0 1px 2px rgba(0,0,0,.4); color-scheme:dark}
-
 *{box-sizing:border-box}
 [hidden]{display:none!important}
 html,body{height:100%}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.5;-webkit-tap-highlight-color:transparent}
-body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--cover)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.5;-webkit-tap-highlight-color:transparent;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--brand)}
 button,input,select{font:inherit;color:inherit}
 button{cursor:pointer}
-:focus-visible{outline:3px solid var(--give);outline-offset:2px}
-.num{font-variant-numeric:tabular-nums}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.num{font-family:var(--f-head);font-variant-numeric:tabular-nums;letter-spacing:.01em}
 .wrap{max-width:560px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.ic{width:22px;height:22px;flex:none;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.ic.sm{width:18px;height:18px}
+.c-get{color:var(--get)} .c-give{color:var(--give)} .c-muted{color:var(--muted)}
 
-/* top cover bar */
-.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--cover);color:var(--cover-ink)}
-.top .wrap{display:flex;align-items:center;gap:10px;padding-block:10px}
-.shop{font-family:var(--f-display);font-size:1.3rem;line-height:1.2;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.sync{font-size:.75rem;padding:3px 10px;border-radius:99px;background:rgba(255,255,255,.14);white-space:nowrap}
-.sync.off{background:#E8B54A;color:#2A1C00}
-.demo{background:#E8B54A;color:#2A1C00;font-size:.8rem;text-align:center;padding:4px 12px}
+/* ---------- header ---------- */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--brand);color:var(--on-brand)}
+.top .wrap{display:flex;align-items:center;gap:12px;padding-block:12px}
+.shopav{width:40px;height:40px;border-radius:12px;background:rgba(255,255,255,.14);display:grid;place-items:center;font-family:var(--f-head);font-weight:700;font-size:1.15rem;flex:none}
+.shopt{flex:1;min-width:0}
+.shopt b{display:block;font-family:var(--f-head);font-weight:650;font-size:1.15rem;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.shopt small{color:var(--on-brand-dim);font-size:.78rem}
+.sync{display:inline-flex;align-items:center;gap:5px;font-size:.74rem;padding:5px 10px;border-radius:99px;background:rgba(255,255,255,.13);white-space:nowrap}
+.sync .dot{width:7px;height:7px;border-radius:50%;background:#7BE0B0}
+.sync.wait .dot{background:var(--gold)}
+.sync.off{background:var(--gold);color:#2A1C00}
+.sync.off .dot{background:#2A1C00}
+.demo{background:var(--gold);color:#2A1C00;font-size:.8rem;text-align:center;padding:5px 12px}
 
 main{padding-bottom:calc(150px + env(safe-area-inset-bottom,0px))}
+.hero{background:linear-gradient(var(--brand) 0 58%, transparent 58%)}
+.hero .wrap{padding-block:4px 0}
 .screen{padding-block:14px}
 
-/* summary */
-.sum{display:grid;grid-template-columns:1fr 1fr;background:var(--paper);border-radius:14px;box-shadow:var(--shadow);overflow:hidden}
-.sum>div{padding:12px 14px}
+/* ---------- summary ---------- */
+.sum{background:var(--card);border-radius:20px;box-shadow:var(--shadow);display:grid;grid-template-columns:1fr 1fr;overflow:hidden}
+.sum>div{padding:14px 16px 13px}
 .sum>div+div{border-left:1px solid var(--line)}
-.sum small{display:block;color:var(--muted);font-size:.8rem}
-.sum b{font-family:var(--f-display);font-weight:400;font-size:1.45rem}
-.c-get{color:var(--get)} .c-give{color:var(--give)}
+.sum .lbl{display:flex;align-items:center;gap:6px;font-size:.8rem;color:var(--muted);font-weight:600}
+.sum .lbl i{width:8px;height:8px;border-radius:50%;display:inline-block}
+.sum b{display:block;font-family:var(--f-head);font-weight:700;font-size:1.6rem;line-height:1.25;margin-top:2px}
+.sum small{color:var(--faint);font-size:.74rem}
 
-.tabs{display:flex;gap:6px;margin-top:14px;background:var(--chip);padding:4px;border-radius:12px}
-.tabs button{flex:1;border:0;background:transparent;padding:8px;border-radius:9px;font-weight:600;color:var(--muted)}
-.tabs button[aria-selected="true"]{background:var(--paper);color:var(--ink);box-shadow:var(--shadow)}
-.search{margin-top:10px;width:100%;padding:11px 14px;border:1px solid var(--line);border-radius:12px;background:var(--paper)}
+.nudge{display:flex;align-items:center;gap:12px;margin-top:12px;padding:12px 14px;border-radius:16px;background:#FFF6E0;border:1px solid #F6DFA6;color:#5B4205;width:100%;text-align:left}
+.nudge span{flex:1;min-width:0;font-size:.86rem}
+.nudge b{display:block;font-size:.92rem}
 
-.plist{margin-top:10px;background:var(--paper);border-radius:14px;box-shadow:var(--shadow);overflow:hidden}
-.prow{display:flex;align-items:center;gap:12px;width:100%;padding:12px 14px;border:0;background:transparent;text-align:left;border-top:1px solid var(--line)}
-.prow:first-child{border-top:0}
-.av{flex:none;width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:var(--chip);font-weight:700;color:var(--muted)}
-.pmid{flex:1;min-width:0}
-.pname{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.psub{font-size:.8rem;color:var(--muted)}
-.pamt{text-align:right}
-.pamt b{display:block;font-weight:700}
-.pamt small{font-size:.72rem;color:var(--muted)}
-.empty{padding:28px 18px;text-align:center;color:var(--muted)}
+.tabs{display:flex;gap:4px;margin-top:14px;background:#E2E8E6;padding:4px;border-radius:14px}
+.tabs button{flex:1;border:0;background:transparent;padding:9px 6px;border-radius:11px;font-weight:600;color:var(--muted);font-size:.92rem}
+.tabs button[aria-selected="true"]{background:var(--card);color:var(--brand);box-shadow:0 1px 3px rgba(8,40,34,.12)}
+.searchbox{position:relative;margin-top:10px}
+.searchbox .ic{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--faint)}
+.searchbox input{width:100%;padding:12px 14px 12px 42px;border:1px solid var(--line);border-radius:14px;background:var(--card);font-size:.95rem}
+.searchbox input:focus{outline:none;border-color:var(--brand-2);box-shadow:0 0 0 3px var(--brand-soft)}
 
-.fab{position:fixed;right:max(16px,env(safe-area-inset-right,0px));bottom:calc(76px + env(safe-area-inset-bottom,0px));z-index:15;border:0;background:var(--cover);color:var(--cover-ink);padding:13px 20px;border-radius:99px;font-weight:700;box-shadow:0 6px 18px rgba(0,0,0,.25)}
+/* ---------- lists ---------- */
+.list{margin-top:10px;background:var(--card);border-radius:18px;box-shadow:var(--shadow);overflow:hidden}
+.row{display:flex;align-items:center;gap:12px;width:100%;padding:12px 14px;border:0;background:transparent;text-align:left;border-top:1px solid var(--line)}
+.row:first-child{border-top:0}
+.row:active{background:var(--field)}
+.av{flex:none;width:42px;height:42px;border-radius:14px;display:grid;place-items:center;font-family:var(--f-head);font-weight:700;font-size:1.1rem}
+.av.sm{width:38px;height:38px;border-radius:12px;font-size:1rem}
+.mid{flex:1;min-width:0}
+.name{display:block;font-weight:600;font-size:.98rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sub{display:block;font-size:.78rem;color:var(--faint);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.amt{text-align:right;flex:none}
+.amt b{display:block;font-family:var(--f-head);font-weight:700;font-size:1.05rem;line-height:1.3}
+.chip{display:inline-block;font-size:.7rem;font-weight:700;padding:1px 8px;border-radius:99px}
+.chip.get{background:var(--get-soft);color:var(--get)} .chip.give{background:var(--give-soft);color:var(--give)} .chip.zero{background:#EDF1F0;color:var(--faint)}
+.empty{padding:34px 20px;text-align:center;color:var(--muted);font-size:.9rem}
+.empty .eic{width:52px;height:52px;border-radius:16px;margin:0 auto 10px;background:var(--brand-soft);color:var(--brand);display:grid;place-items:center}
+.count{display:flex;justify-content:space-between;align-items:center;margin:16px 4px 0;font-size:.8rem;color:var(--muted);font-weight:600}
 
-/* bottom nav */
-.nav{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--paper);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
+.fab{position:fixed;right:max(16px,env(safe-area-inset-right,0px));bottom:calc(80px + env(safe-area-inset-bottom,0px));z-index:15;border:0;background:var(--brand);color:#fff;padding:13px 20px 13px 16px;border-radius:18px;font-weight:700;box-shadow:var(--shadow-lg);display:flex;align-items:center;gap:8px}
+
+/* ---------- bottom nav ---------- */
+.nav{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--card);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
 .nav .wrap{display:grid;grid-template-columns:repeat(3,1fr)}
-.nav button{border:0;background:transparent;padding:8px 4px 10px;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:.8rem;color:var(--muted)}
-.nav button[aria-current="page"]{color:var(--cover);font-weight:700}
-:root[data-theme="dark"] .nav button[aria-current="page"]{color:var(--cover-ink)}
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .nav button[aria-current="page"]{color:var(--cover-ink)}}
-.nav svg{width:24px;height:24px}
+.nav button{border:0;background:transparent;padding:8px 4px 9px;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:.76rem;color:var(--faint);font-weight:600}
+.nav button span.pill{display:grid;place-items:center;width:56px;height:30px;border-radius:99px}
+.nav button[aria-current="page"]{color:var(--brand)}
+.nav button[aria-current="page"] span.pill{background:var(--brand-soft)}
 
-/* party ledger view */
+/* ---------- party ledger ---------- */
 .layer{position:fixed;inset:0;z-index:40;background:var(--bg);overflow-y:auto;padding-top:env(safe-area-inset-top,0px)}
-.lhead{position:sticky;top:0;z-index:2;background:var(--cover);color:var(--cover-ink)}
-.lhead .wrap{display:flex;align-items:center;gap:8px;padding-block:8px}
+.lhead{position:sticky;top:0;z-index:2;background:var(--brand);color:#fff}
+.lhead .wrap{display:flex;align-items:center;gap:10px;padding-block:8px}
 .ib{border:0;background:transparent;color:inherit;width:42px;height:42px;border-radius:50%;display:grid;place-items:center;flex:none}
-.ib svg{width:24px;height:24px}
+.ib:active{background:rgba(255,255,255,.14)}
 .lt{flex:1;min-width:0}
-.lt b{display:block;font-size:1.1rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.lt small{opacity:.8}
-.bal{margin-top:14px;padding:14px;border-radius:14px;display:flex;justify-content:space-between;align-items:center;gap:10px}
-.bal.get{background:var(--get-soft);color:var(--get)} .bal.give{background:var(--give-soft);color:var(--give)} .bal.zero{background:var(--chip);color:var(--muted)}
-.bal b{font-family:var(--f-display);font-weight:400;font-size:1.7rem;line-height:1.1}
-.acts{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
-.acts a,.acts button{flex:1 1 30%;text-decoration:none;text-align:center;padding:9px 6px;border-radius:10px;background:var(--paper);border:1px solid var(--line);font-size:.85rem;font-weight:600;color:var(--ink)}
-.acts .dis{opacity:.45;pointer-events:none}
+.lt b{display:block;font-family:var(--f-head);font-weight:650;font-size:1.12rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.25}
+.lt small{color:var(--on-brand-dim);font-size:.78rem}
+.balcard{background:var(--card);border-radius:20px;box-shadow:var(--shadow);padding:16px}
+.balrow{display:flex;justify-content:space-between;align-items:flex-end;gap:12px}
+.balrow small{display:block;color:var(--muted);font-weight:600;font-size:.82rem}
+.balrow b{display:block;font-family:var(--f-head);font-weight:750;font-size:2rem;line-height:1.15}
+.acts{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px;padding-top:14px;border-top:1px dashed var(--line)}
+.act{display:flex;flex-direction:column;align-items:center;gap:4px;text-decoration:none;color:var(--brand);font-size:.78rem;font-weight:600;padding:8px 4px;border-radius:12px;background:var(--brand-soft)}
+.act.dis{opacity:.4;pointer-events:none}
+.hint{font-size:.8rem;color:var(--muted);margin:10px 4px 0}
 
-.ledger{margin-top:14px;background:var(--paper);border-radius:14px;box-shadow:var(--shadow);overflow:hidden}
-.lrow{display:grid;grid-template-columns:1fr 84px 84px;border-top:1px solid var(--line);width:100%;border-left:0;border-right:0;border-bottom:0;background:transparent;text-align:left;padding:0}
-.lrow>span{padding:10px 10px}
-.lrow>span+span{border-left:1px solid var(--rule);text-align:right}
-.lrow.h{border-top:0;font-size:.75rem;color:var(--muted);font-weight:600;letter-spacing:.02em}
-.lrow.h>span{padding-block:7px}
-.ld{font-size:.75rem;color:var(--muted);display:block}
-.ln{display:block;word-break:break-word}
-.lrow .r{color:var(--get);font-weight:700}
-.lrow .g{color:var(--give);font-weight:700}
-.bottombar{position:fixed;left:0;right:0;bottom:0;z-index:41;background:var(--paper);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
+.ledger{margin-top:14px;background:var(--card);border-radius:18px;box-shadow:var(--shadow);overflow:hidden}
+.lrow{display:grid;grid-template-columns:minmax(0,1fr) 86px 86px;width:100%;border:0;border-top:1px solid var(--line);background:transparent;text-align:left;padding:0}
+.lrow>span{padding:11px 10px;min-width:0}
+.lrow>span:nth-child(2){background:#FEF6F5;text-align:right}
+.lrow>span:nth-child(3){background:#F3FAF6;text-align:right}
+.lrow.h{border-top:0;font-size:.74rem;font-weight:700;color:var(--muted)}
+.lrow.h>span{padding-block:8px}
+.lrow.h>span:nth-child(2){background:var(--get-soft);color:var(--get)}
+.lrow.h>span:nth-child(3){background:var(--give-soft);color:var(--give)}
+.lrow:not(.h):active{background:var(--field)}
+.ln{display:block;font-weight:600;font-size:.9rem;word-break:break-word}
+.ld{display:block;font-size:.72rem;color:var(--faint)}
+.lb{display:block;font-size:.72rem;margin-top:2px;font-weight:600}
+.lrow .r{color:var(--get);font-weight:700;font-family:var(--f-head);font-size:.98rem}
+.lrow .g{color:var(--give);font-weight:700;font-family:var(--f-head);font-size:.98rem}
+
+.bottombar{position:fixed;left:0;right:0;bottom:0;z-index:41;background:var(--card);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px);box-shadow:0 -6px 20px rgba(8,40,34,.06)}
 .bottombar .wrap{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding-block:10px}
-.big{border:0;border-radius:12px;padding:13px 10px;font-size:1.05rem;font-weight:700;color:#fff}
-.big small{display:block;font-size:.72rem;font-weight:500;opacity:.9}
-.big.red{background:#B3261E} .big.green{background:#1F7A4D}
-.hint{font-size:.8rem;color:var(--muted);margin-top:10px}
+.big{border:0;border-radius:14px;padding:11px 10px;font-size:1.05rem;font-weight:700;color:#fff;display:flex;align-items:center;justify-content:center;gap:8px;font-family:var(--f-head)}
+.big small{display:block;font-size:.7rem;font-weight:500;opacity:.88;font-family:var(--f-body)}
+.big span{text-align:left;line-height:1.2}
+.big.red{background:var(--get)} .big.green{background:var(--give)}
 
-/* daily */
-.daynav{display:flex;align-items:center;gap:8px;background:var(--paper);border-radius:14px;box-shadow:var(--shadow);padding:6px}
-.daynav .ib{color:var(--ink)}
-.daynav div{flex:1;text-align:center;font-weight:700}
-.daynav small{display:block;font-weight:400;color:var(--muted);font-size:.75rem}
-.dgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
-.dcell{background:var(--paper);border-radius:12px;padding:10px 12px;border:1px solid var(--line)}
-.dcell small{display:block;color:var(--muted);font-size:.78rem}
-.dcell b{font-size:1.15rem}
-.dtotal{margin-top:10px;padding:12px 14px;border-radius:12px;background:var(--cover);color:var(--cover-ink);display:flex;justify-content:space-between;align-items:center;gap:10px}
-.dtotal b{font-family:var(--f-display);font-weight:400;font-size:1.4rem}
-.sec{margin:18px 2px 8px;font-size:.8rem;font-weight:700;color:var(--muted);letter-spacing:.03em}
-.drow{display:flex;gap:10px;align-items:center;width:100%;padding:11px 14px;border:0;border-top:1px solid var(--line);background:transparent;text-align:left}
-.drow:first-child{border-top:0}
-.tag{flex:none;font-size:.7rem;font-weight:700;padding:2px 8px;border-radius:99px}
-.tag.s{background:var(--give-soft);color:var(--give)} .tag.x{background:var(--get-soft);color:var(--get)} .tag.p{background:var(--chip);color:var(--muted)}
+/* ---------- daily ---------- */
+.daynav{display:flex;align-items:center;gap:6px;background:var(--card);border-radius:18px;box-shadow:var(--shadow);padding:6px}
+.daynav .ib{color:var(--brand);background:var(--brand-soft);width:40px;height:40px}
+.daynav .ib:disabled{opacity:.35}
+.daynav div{flex:1;text-align:center;font-family:var(--f-head);font-weight:650;font-size:1.05rem;line-height:1.2}
+.daynav small{display:block;font-family:var(--f-body);font-weight:400;color:var(--muted);font-size:.76rem}
+.net{margin-top:12px;padding:16px;border-radius:20px;background:var(--brand);color:#fff;box-shadow:var(--shadow)}
+.net small{color:var(--on-brand-dim);font-size:.8rem;display:block}
+.net b{display:block;font-family:var(--f-head);font-weight:750;font-size:2rem;line-height:1.2}
+.dgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.dcell{background:var(--card);border-radius:16px;padding:12px 14px;box-shadow:var(--shadow)}
+.dcell small{display:block;color:var(--muted);font-size:.76rem;font-weight:600}
+.dcell b{font-family:var(--f-head);font-weight:700;font-size:1.2rem}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.sec{margin:20px 4px 8px;font-size:.8rem;font-weight:700;color:var(--muted)}
+.tag{flex:none;width:42px;height:42px;border-radius:14px;display:grid;place-items:center}
+.tag.s{background:var(--give-soft);color:var(--give)} .tag.x{background:var(--get-soft);color:var(--get)} .tag.p{background:var(--brand-soft);color:var(--brand)}
 
-/* more */
-.card{background:var(--paper);border-radius:14px;box-shadow:var(--shadow);padding:14px;margin-bottom:12px}
-.card h3{margin:0 0 8px;font-size:1rem}
-.card p{margin:0 0 10px;color:var(--muted);font-size:.88rem}
-.btn{border:1px solid var(--line);background:var(--paper);border-radius:10px;padding:10px 14px;font-weight:600}
-.btn.pri{background:var(--cover);color:var(--cover-ink);border-color:var(--cover)}
-.btn.dang{color:var(--get);border-color:var(--get)}
-.row{display:flex;gap:8px;flex-wrap:wrap}
+/* ---------- settings ---------- */
+.card{background:var(--card);border-radius:18px;box-shadow:var(--shadow);padding:16px;margin-bottom:12px}
+.card h3{margin:0 0 4px;font-family:var(--f-head);font-weight:650;font-size:1.05rem;display:flex;align-items:center;gap:8px}
+.card h3 .ic{color:var(--brand)}
+.card p{margin:0 0 12px;color:var(--muted);font-size:.86rem}
+.field{width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--field);font-size:.95rem}
+.field:focus{outline:none;border-color:var(--brand-2);box-shadow:0 0 0 3px var(--brand-soft);background:#fff}
+.btn{border:1px solid var(--line);background:var(--card);border-radius:12px;padding:11px 16px;font-weight:600;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.btn.pri{background:var(--brand);color:#fff;border-color:var(--brand)}
+.btn.dang{color:var(--get);border-color:var(--get-line);background:#fff}
+.btn.full{width:100%}
+.btnrow{display:flex;gap:8px;flex-wrap:wrap}
+.btnrow .btn{flex:1 1 140px}
+.status{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;background:var(--give-soft);color:var(--give);font-weight:600;font-size:.88rem}
+.status.wait{background:#FFF6E0;color:#7A5806}
+.foot{text-align:center;color:var(--faint);font-size:.76rem;margin-top:18px}
 
-/* sheet */
-.scrim{position:fixed;inset:0;z-index:60;background:rgba(10,15,12,.45);display:flex;align-items:flex-end;justify-content:center}
-.sheet{width:100%;max-width:560px;max-height:92dvh;overflow-y:auto;background:var(--paper);border-radius:18px 18px 0 0;padding:18px max(16px,env(safe-area-inset-right,0px)) calc(18px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
-.sheet h2{margin:0 0 12px;font-size:1.15rem}
-.f{display:block;margin-bottom:12px}
-.f>span{display:block;font-size:.82rem;color:var(--muted);margin-bottom:4px;font-weight:600}
-.f input,.f select{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg)}
-.f input.amt{font-size:1.6rem;font-weight:700;padding:10px 12px}
-.seg{display:flex;gap:6px}
-.seg label{flex:1}
+/* ---------- sheet ---------- */
+.scrim{position:fixed;inset:0;z-index:60;background:rgba(6,25,21,.48);display:flex;align-items:flex-end;justify-content:center}
+.sheet{width:100%;max-width:560px;max-height:92dvh;overflow-y:auto;background:var(--card);border-radius:24px 24px 0 0;padding:8px max(18px,env(safe-area-inset-right,0px)) calc(18px + env(safe-area-inset-bottom,0px)) max(18px,env(safe-area-inset-left,0px))}
+.grab{width:40px;height:4px;border-radius:99px;background:var(--line);margin:4px auto 10px}
+.shead{display:flex;align-items:center;gap:8px;margin-bottom:14px}
+.shead h2{flex:1;margin:0;font-family:var(--f-head);font-weight:650;font-size:1.2rem;line-height:1.3}
+.shead .ib{color:var(--muted);background:var(--field);width:36px;height:36px}
+.f{display:block;margin-bottom:14px}
+.f>span{display:block;font-size:.8rem;color:var(--muted);margin-bottom:5px;font-weight:600}
+.money{display:flex;align-items:center;border:1.5px solid var(--line);border-radius:14px;background:var(--field);padding:0 14px}
+.money:focus-within{border-color:var(--brand-2);background:#fff;box-shadow:0 0 0 3px var(--brand-soft)}
+.money i{font-style:normal;font-family:var(--f-head);font-weight:700;font-size:1.6rem;color:var(--faint)}
+.money input{flex:1;min-width:0;border:0;background:transparent;font-family:var(--f-head);font-weight:700;font-size:1.9rem;padding:8px 8px;outline:none}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.seg label{position:relative}
 .seg input{position:absolute;opacity:0;pointer-events:none}
-.seg span{display:block;text-align:center;padding:9px 6px;border:1px solid var(--line);border-radius:10px;font-weight:600;font-size:.9rem}
-.seg input:checked+span{background:var(--cover);color:var(--cover-ink);border-color:var(--cover)}
-.seg input:focus-visible+span{outline:3px solid var(--give);outline-offset:2px}
-.seg.tr input[value="dilam"]:checked+span,.seg.tr input[value="expense"]:checked+span{background:#B3261E;border-color:#B3261E;color:#fff}
-.seg.tr input[value="pelam"]:checked+span,.seg.tr input[value="sale"]:checked+span{background:#1F7A4D;border-color:#1F7A4D;color:#fff}
-.sacts{display:flex;gap:8px;margin-top:6px}
-.sacts .btn{flex:1;padding:12px}
-.confirm{margin-top:12px;padding:12px;border-radius:10px;background:var(--get-soft);color:var(--get);font-size:.9rem}
+.seg span{display:block;text-align:center;padding:11px 6px;border:1.5px solid var(--line);border-radius:12px;font-weight:600;font-size:.9rem;color:var(--muted)}
+.seg input:checked+span{background:var(--brand-soft);color:var(--brand);border-color:var(--brand-2)}
+.seg input:focus-visible+span{outline:3px solid var(--gold);outline-offset:2px}
+.seg.tr input[value="dilam"]:checked+span,.seg.tr input[value="expense"]:checked+span{background:var(--get-soft);border-color:var(--get);color:var(--get)}
+.seg.tr input[value="pelam"]:checked+span,.seg.tr input[value="sale"]:checked+span{background:var(--give-soft);border-color:var(--give);color:var(--give)}
+.save{margin-top:4px;width:100%;border:0;border-radius:14px;padding:14px;font-weight:700;font-size:1.02rem;background:var(--brand);color:#fff;font-family:var(--f-head)}
+.save.red{background:var(--get)} .save.green{background:var(--give)}
+.del{margin-top:10px;width:100%;border:0;background:transparent;color:var(--get);font-weight:600;padding:10px;display:flex;align-items:center;justify-content:center;gap:6px}
+.confirm{margin-top:12px;padding:14px;border-radius:14px;background:var(--get-soft);color:var(--get);font-size:.9rem;font-weight:600}
+.confirm .btnrow{margin-top:10px}
+.confirm .btn.dang{background:var(--get);color:#fff;border-color:var(--get)}
 
-/* login */
-.login{min-height:100%;display:flex;flex-direction:column;justify-content:center;background:var(--cover);color:var(--cover-ink)}
-.login .wrap{padding-block:40px;text-align:center}
-.login h1{font-family:var(--f-display);font-weight:400;font-size:2.4rem;margin:12px 0 4px}
-.login p{opacity:.85;margin:0 auto 26px;max-width:30ch}
-.gbtn{display:inline-flex;align-items:center;gap:10px;border:0;background:#fff;color:#1f1f1f;border-radius:99px;padding:12px 22px;font-weight:600;font-size:1rem}
-.gbtn svg{width:20px;height:20px}
-.lerr{margin-top:16px;background:rgba(0,0,0,.25);padding:10px 12px;border-radius:10px;font-size:.88rem}
-.logo{width:84px;height:84px;margin:0 auto}
+/* ---------- login ---------- */
+.login{min-height:100%;display:flex;flex-direction:column;background:var(--brand);color:#fff}
+.login .top-art{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 24px 28px;text-align:center}
+.logo{width:88px;height:88px}
+.login h1{font-family:var(--f-head);font-weight:750;font-size:2.3rem;margin:14px 0 2px;line-height:1.2}
+.login .tag-l{color:var(--on-brand-dim);margin:0;font-size:.95rem}
+.lpanel{background:var(--card);color:var(--ink);border-radius:28px 28px 0 0;padding:24px max(22px,env(safe-area-inset-right,0px)) calc(26px + env(safe-area-inset-bottom,0px)) max(22px,env(safe-area-inset-left,0px))}
+.lpanel ul{list-style:none;margin:0 0 20px;padding:0;display:grid;gap:12px}
+.lpanel li{display:flex;gap:12px;align-items:flex-start;font-size:.92rem;color:var(--muted)}
+.lpanel li b{display:block;color:var(--ink);font-size:.96rem}
+.lpanel li .eic{width:38px;height:38px;border-radius:12px;background:var(--brand-soft);color:var(--brand);display:grid;place-items:center;flex:none}
+.gbtn{display:flex;width:100%;align-items:center;justify-content:center;gap:10px;border:1.5px solid var(--line);background:#fff;color:#1f1f1f;border-radius:16px;padding:14px 20px;font-weight:700;font-size:1rem;box-shadow:var(--shadow)}
+.gbtn svg{width:22px;height:22px}
+.lerr{margin-top:14px;background:var(--get-soft);color:var(--get);padding:12px 14px;border-radius:12px;font-size:.88rem;font-weight:600}
+.spin{width:28px;height:28px;border-radius:50%;border:3px solid rgba(255,255,255,.25);border-top-color:#fff;margin:22px auto 0;animation:sp 0.9s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.loadmsg{color:var(--on-brand-dim);margin-top:12px;font-size:.92rem}
+.loadmsg .gbtn{margin-top:16px;width:auto;display:inline-flex}
 
-.upd{position:fixed;left:0;right:0;bottom:calc(64px + env(safe-area-inset-bottom,0px));z-index:35;background:#1F7A4D;color:#fff}
-.upd .wrap{display:flex;align-items:center;gap:10px;padding-block:9px;font-size:.9rem}
+/* ---------- update bar + toast ---------- */
+.upd{position:fixed;left:0;right:0;bottom:calc(64px + env(safe-area-inset-bottom,0px));z-index:35;padding-inline:12px}
+.upd .wrap{display:flex;align-items:center;gap:10px;padding-block:10px;background:var(--brand-deep);color:#fff;border-radius:16px;box-shadow:var(--shadow-lg);font-size:.88rem}
 .upd span{flex:1;min-width:0}
-.upd button{border:0;background:#fff;color:#1F7A4D;font-weight:700;border-radius:99px;padding:7px 14px;flex:none}
+.upd button{border:0;background:var(--gold);color:#2A1C00;font-weight:700;border-radius:99px;padding:8px 14px;flex:none}
 .upd button:disabled{opacity:.6}
-.toast{position:fixed;left:50%;bottom:calc(150px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:80;background:var(--ink);color:var(--bg);padding:9px 16px;border-radius:99px;font-size:.9rem;max-width:calc(100% - 32px)}
-@media (prefers-reduced-motion:no-preference){.sheet{animation:up .18s ease-out}@keyframes up{from{transform:translateY(30px);opacity:.6}}}
+.toast{position:fixed;left:50%;bottom:calc(150px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:80;background:#12201C;color:#fff;padding:10px 18px;border-radius:14px;font-size:.9rem;max-width:calc(100% - 32px);box-shadow:var(--shadow-lg);text-align:center}
+@media (prefers-reduced-motion:no-preference){
+  .sheet{animation:up .2s cubic-bezier(.2,.8,.2,1)}
+  @keyframes up{from{transform:translateY(40px);opacity:.5}}
+  .layer{animation:inr .18s ease-out}
+  @keyframes inr{from{transform:translateX(24px);opacity:.6}}
+}
 </style>
 
-<div id="loading" class="login"><div class="wrap"><h1>হিসাবের খাতা</h1><p id="loadMsg">খোলা হচ্ছে…</p></div></div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-book" viewBox="0 0 24 24"><path d="M5 4.5A1.5 1.5 0 0 1 6.5 3H19v15H6.5A1.5 1.5 0 0 0 5 19.5z"/><path d="M5 19.5A1.5 1.5 0 0 0 6.5 21H19v-3"/><path d="M9 8h6M9 11.5h4"/></symbol>
+  <symbol id="i-cal" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/><path d="M8 14h3"/></symbol>
+  <symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></symbol>
+  <symbol id="i-back" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></symbol>
+  <symbol id="i-next" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></symbol>
+  <symbol id="i-edit" viewBox="0 0 24 24"><path d="M4 20h4L19 9a2.8 2.8 0 0 0-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></symbol>
+  <symbol id="i-phone" viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></symbol>
+  <symbol id="i-msg" viewBox="0 0 24 24"><path d="M4 5h16v11H8l-4 4z"/><path d="M8 9.5h8M8 12.5h5"/></symbol>
+  <symbol id="i-chat" viewBox="0 0 24 24"><path d="M20 11.5a8 8 0 0 1-11.8 7L4 20l1.5-4A8 8 0 1 1 20 11.5z"/><path d="M9 9.5c0 3 2.5 5.5 5.5 5.5l1-1.5-2-1-1 .8a4 4 0 0 1-1.8-1.8l.8-1-1-2z"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></symbol>
+  <symbol id="i-cloud" viewBox="0 0 24 24"><path d="M7 18a4.5 4.5 0 0 1-.5-9A6 6 0 0 1 18 9.5a4 4 0 0 1-.5 8.5z"/><path d="m9.5 13 2 2 3.5-3.5"/></symbol>
+  <symbol id="i-down" viewBox="0 0 24 24"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></symbol>
+  <symbol id="i-out" viewBox="0 0 24 24"><path d="M15 4h4v16h-4M10 8l-4 4 4 4M6 12h10"/></symbol>
+  <symbol id="i-store" viewBox="0 0 24 24"><path d="M4 9.5 5.5 4h13L20 9.5M4 9.5v10h16v-10M4 9.5c0 1.5 1.3 2.5 2.7 2.5S9.3 11 9.3 9.5c0 1.5 1.2 2.5 2.7 2.5s2.7-1 2.7-2.5c0 1.5 1.2 2.5 2.6 2.5S20 11 20 9.5"/><path d="M10 19.5v-4h4v4"/></symbol>
+  <symbol id="i-upd" viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.3-5.7M20 4v5h-5"/></symbol>
+  <symbol id="i-in" viewBox="0 0 24 24"><path d="M17 7 7 17M7 9v8h8"/></symbol>
+  <symbol id="i-outa" viewBox="0 0 24 24"><path d="M7 17 17 7M9 7h8v8"/></symbol>
+  <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M3 20a6 6 0 0 1 12 0M16 4.5a3.5 3.5 0 0 1 0 7M18 14a6 6 0 0 1 3 6"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3 5 6v6c0 4.5 3 7.5 7 9 4-1.5 7-4.5 7-9V6z"/><path d="m9 12 2 2 4-4"/></symbol>
+  <symbol id="i-wifi0" viewBox="0 0 24 24"><path d="M3 3l18 18M8.5 16.5a5 5 0 0 1 7 0M5 13a10 10 0 0 1 5-2.7M14 10.3A10 10 0 0 1 19 13M2 9.5a15 15 0 0 1 4.5-2.8M11 5a15 15 0 0 1 11 4.5"/><circle cx="12" cy="20" r=".8"/></symbol>
+  <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15zM10 20a2 2 0 0 0 4 0"/></symbol>
+</svg>
+
+<div id="loading" class="login"><div class="top-art">
+  <svg class="logo" viewBox="0 0 88 88" aria-hidden="true"><rect width="88" height="88" rx="24" fill="rgba(255,255,255,.12)"/><rect x="22" y="16" width="44" height="56" rx="6" fill="#fff"/><rect x="22" y="16" width="9" height="56" rx="3" fill="#F3B53F"/><path d="M38 31h20M38 41h20M38 51h12" stroke="#0A5A4E" stroke-width="4" stroke-linecap="round"/></svg>
+  <h1>হিসাবের খাতা</h1>
+  <div class="spin" id="spin"></div>
+  <div class="loadmsg" id="loadMsg">খোলা হচ্ছে…</div>
+</div></div>
 
 <div id="login" class="login" hidden>
-  <div class="wrap">
-    <svg class="logo" viewBox="0 0 84 84" aria-hidden="true"><rect x="10" y="12" width="64" height="62" rx="6" fill="#F6E6C4"/><rect x="10" y="12" width="10" height="62" rx="3" fill="#C9A86A"/><path d="M28 30h36M28 42h36M28 54h24" stroke="#7A1F24" stroke-width="4" stroke-linecap="round"/></svg>
+  <div class="top-art">
+    <svg class="logo" viewBox="0 0 88 88" aria-hidden="true"><rect width="88" height="88" rx="24" fill="rgba(255,255,255,.12)"/><rect x="22" y="16" width="44" height="56" rx="6" fill="#fff"/><rect x="22" y="16" width="9" height="56" rx="3" fill="#F3B53F"/><path d="M38 31h20M38 41h20M38 51h12" stroke="#0A5A4E" stroke-width="4" stroke-linecap="round"/></svg>
     <h1>হিসাবের খাতা</h1>
-    <p>দোকানের বাকি আর দৈনিক বেচা-খরচের হিসাব। সব হিসাব আপনার Google অ্যাকাউন্টে নিরাপদে থাকে।</p>
+    <p class="tag-l">দোকানের বাকি আর বেচা-খরচ, এক জায়গায়</p>
+  </div>
+  <div class="lpanel">
+    <ul>
+      <li><span class="eic"><svg class="ic"><use href="#i-book"/></svg></span><span><b>বাকির খাতা</b>কে কত নিল, কত দিল, সব হিসাব আলাদা আলাদা</span></li>
+      <li><span class="eic"><svg class="ic"><use href="#i-cal"/></svg></span><span><b>দৈনিক হিসাব</b>প্রতিদিনের বেচা, খরচ আর হাতে নগদ কত</span></li>
+      <li><span class="eic"><svg class="ic"><use href="#i-shield"/></svg></span><span><b>হারাবে না</b>সব হিসাব আপনার Google অ্যাকাউন্টে নিরাপদে থাকে</span></li>
+    </ul>
     <button id="gsign" class="gbtn"><svg viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="m6.3 14.7 6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg>Google দিয়ে ঢুকুন</button>
     <div id="lerr" class="lerr" hidden></div>
   </div>
 </div>
 
 <div id="app" hidden>
-  <header class="top"><div class="wrap"><div class="shop" id="shopName">আমার দোকান</div><div class="sync" id="sync">☁ সেভ হয়েছে</div></div></header>
-  <div class="demo" id="demoBar" hidden>এটা ডেমো — নিচের নাম আর টাকা উদাহরণ মাত্র</div>
+  <header class="top"><div class="wrap">
+    <div class="shopav" id="shopAv">দো</div>
+    <div class="shopt"><b id="shopName">আমার দোকান</b><small id="topSub">বাকির খাতা</small></div>
+    <div class="sync" id="sync"><span class="dot"></span><span id="syncT">সেভ হয়েছে</span></div>
+  </div></header>
+  <div class="demo" id="demoBar" hidden>এটা ডেমো, নাম আর টাকা সব উদাহরণ</div>
   <main>
-    <section class="screen wrap" id="s-khata">
-      <div class="sum"><div><small>মোট পাবো</small><b class="c-get num" id="tGet">৳০</b></div><div><small>মোট দেবো</small><b class="c-give num" id="tGive">৳০</b></div></div>
-      <div class="tabs" role="tablist">
-        <button role="tab" id="tabC" aria-selected="true" data-k="customer">কাস্টমার</button>
-        <button role="tab" id="tabS" aria-selected="false" data-k="supplier">মহাজন</button>
+    <section id="s-khata">
+      <div class="hero"><div class="wrap">
+        <div class="sum">
+          <div><span class="lbl"><i style="background:var(--get)"></i>মোট পাবো</span><b class="c-get" id="tGet">৳০</b><small id="tGetN">০ জনের কাছে</small></div>
+          <div><span class="lbl"><i style="background:var(--give)"></i>মোট দেবো</span><b class="c-give" id="tGive">৳০</b><small id="tGiveN">০ জনকে</small></div>
+        </div>
+      </div></div>
+      <div class="wrap">
+        <button class="nudge" id="nudge" hidden><svg class="ic"><use href="#i-store"/></svg><span><b>দোকানের নাম দিন</b>তাগাদার মেসেজে এই নাম যাবে</span><svg class="ic sm"><use href="#i-next"/></svg></button>
+        <div class="tabs" role="tablist">
+          <button role="tab" id="tabC" aria-selected="true" data-k="customer">কাস্টমার</button>
+          <button role="tab" id="tabS" aria-selected="false" data-k="supplier">মহাজন</button>
+        </div>
+        <div class="searchbox"><svg class="ic"><use href="#i-search"/></svg><input id="q" type="search" placeholder="নাম বা মোবাইল নম্বর দিয়ে খুঁজুন" autocomplete="off"></div>
+        <div class="count" id="countRow"></div>
+        <div class="list" id="plist"></div>
       </div>
-      <input class="search" id="q" type="search" placeholder="নাম বা মোবাইল নম্বর দিয়ে খুঁজুন" autocomplete="off">
-      <div class="plist" id="plist"></div>
     </section>
     <section class="screen wrap" id="s-day" hidden>
-      <div class="daynav"><button class="ib" id="dPrev" aria-label="আগের দিন"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m15 6-6 6 6 6"/></svg></button><div id="dLabel"></div><button class="ib" id="dNext" aria-label="পরের দিন"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m9 6 6 6-6 6"/></svg></button></div>
+      <div class="daynav"><button class="ib" id="dPrev" aria-label="আগের দিন"><svg class="ic"><use href="#i-back"/></svg></button><div id="dLabel"></div><button class="ib" id="dNext" aria-label="পরের দিন"><svg class="ic"><use href="#i-next"/></svg></button></div>
+      <div class="net"><small id="netLbl">দিনের নগদ হিসাব</small><b class="num" id="dTotal">৳০</b><small>বেচা + বাকি আদায় − খরচ − মহাজনকে দেওয়া</small></div>
       <div class="dgrid" id="dgrid"></div>
-      <div class="dtotal"><span>দিনের নগদ<br><small id="dTotalSub" style="opacity:.8;font-size:.75rem">বেচা + আদায় − খরচ − মহাজনকে দেওয়া</small></span><b class="num" id="dTotal">৳০</b></div>
-      <div class="row" style="margin-top:12px"><button class="big green" style="flex:1" id="addSale">+ নগদ বেচা</button><button class="big red" style="flex:1" id="addExp">+ খরচ</button></div>
+      <div class="two"><button class="big green" id="addSale"><svg class="ic"><use href="#i-in"/></svg>নগদ বেচা</button><button class="big red" id="addExp"><svg class="ic"><use href="#i-outa"/></svg>খরচ</button></div>
       <div class="sec">এই দিনের সব লেনদেন</div>
-      <div class="plist" id="dlist"></div>
+      <div class="list" id="dlist"></div>
     </section>
     <section class="screen wrap" id="s-more" hidden>
-      <div class="card"><h3>দোকানের নাম</h3><p>উপরে আর তাগাদার মেসেজে এই নাম দেখাবে।</p><div class="row"><input class="search" style="margin:0;flex:1;min-width:0" id="shopInput" placeholder="যেমন: মায়ের দোয়া স্টোর"><button class="btn pri" id="shopSave">সেভ</button></div></div>
-      <div class="card"><h3>হিসাব কোথায় থাকে</h3><p id="syncInfo"></p></div>
-      <div class="card"><h3>হিসাব ডাউনলোড</h3><p>এক্সেলে খোলা যায় এমন ফাইল। মাঝে মাঝে নামিয়ে রাখলে বাড়তি নিরাপত্তা।</p><div class="row"><button class="btn" id="expP">বাকির তালিকা</button><button class="btn" id="expE">সব লেনদেন</button></div></div>
-      <div class="card" id="verCard" hidden><h3>অ্যাপ আপডেট</h3><p id="verInfo"></p><button class="btn" id="verCheck">আপডেট আছে কিনা দেখুন</button></div>
-      <div class="card" id="accCard"><h3>অ্যাকাউন্ট</h3><p id="accInfo"></p><button class="btn dang" id="logout">লগআউট</button></div>
+      <div class="card"><h3><svg class="ic"><use href="#i-store"/></svg>দোকানের নাম</h3><p>উপরে আর তাগাদার মেসেজে এই নাম দেখাবে।</p><div class="btnrow"><input class="field" style="flex:1 1 180px;min-width:0" id="shopInput" placeholder="যেমন: মায়ের দোয়া স্টোর"><button class="btn pri" id="shopSave" style="flex:0 0 auto">সেভ</button></div></div>
+      <div class="card"><h3><svg class="ic"><use href="#i-cloud"/></svg>হিসাব কোথায় থাকে</h3><p id="syncInfo"></p><div class="status" id="syncStatus"></div></div>
+      <div class="card"><h3><svg class="ic"><use href="#i-down"/></svg>হিসাব ডাউনলোড</h3><p>এক্সেলে খোলা যায় এমন ফাইল। মাঝে মাঝে নামিয়ে রাখলে বাড়তি নিরাপত্তা।</p><div class="btnrow"><button class="btn" id="expP"><svg class="ic sm"><use href="#i-users"/></svg>বাকির তালিকা</button><button class="btn" id="expE"><svg class="ic sm"><use href="#i-book"/></svg>সব লেনদেন</button></div></div>
+      <div class="card" id="verCard" hidden><h3><svg class="ic"><use href="#i-upd"/></svg>অ্যাপ আপডেট</h3><p id="verInfo"></p><button class="btn full" id="verCheck">আপডেট আছে কিনা দেখুন</button></div>
+      <div class="card" id="accCard"><h3><svg class="ic"><use href="#i-shield"/></svg>অ্যাকাউন্ট</h3><p id="accInfo"></p><button class="btn dang full" id="logout"><svg class="ic sm"><use href="#i-out"/></svg>লগআউট</button></div>
+      <div class="foot" id="foot">হিসাবের খাতা</div>
     </section>
   </main>
-  <button class="fab" id="fab">+ নতুন কাস্টমার</button>
+  <button class="fab" id="fab"><svg class="ic"><use href="#i-plus"/></svg><span id="fabT">নতুন কাস্টমার</span></button>
   <nav class="nav"><div class="wrap">
-    <button data-v="khata" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 4h12a2 2 0 0 1 2 2v14H7a2 2 0 0 1-2-2z"/><path d="M9 9h6M9 13h6"/></svg>বাকির খাতা</button>
-    <button data-v="day"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg>দৈনিক হিসাব</button>
-    <button data-v="more"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>আরও</button>
+    <button data-v="khata" aria-current="page"><span class="pill"><svg class="ic"><use href="#i-book"/></svg></span>বাকির খাতা</button>
+    <button data-v="day"><span class="pill"><svg class="ic"><use href="#i-cal"/></svg></span>দৈনিক হিসাব</button>
+    <button data-v="more"><span class="pill"><svg class="ic"><use href="#i-gear"/></svg></span>আরও</button>
   </div></nav>
 </div>
 
 <div id="pv" class="layer" hidden></div>
 <div id="sheetWrap" hidden></div>
-<div id="upd" class="upd" hidden><div class="wrap"><span id="updText">নতুন আপডেট এসেছে</span><button id="updBtn">আপডেট করুন</button></div></div>
+<div id="upd" class="upd" hidden><div class="wrap"><svg class="ic"><use href="#i-bell"/></svg><span id="updText">নতুন আপডেট এসেছে</span><button id="updBtn">আপডেট করুন</button></div></div>
 <div id="toast" class="toast" hidden></div>
 
 <script>
-/* ===== Firebase সেটিং — এখানে নিজের Firebase config বসাতে হবে ===== */
+/* ===== Firebase সেটিং ===== */
 const FIREBASE_CONFIG = {
   apiKey: "AIzaSyBzt4W0M2C55-xEwjJR90aur5zMNDjl0xk",
   authDomain: "hisab-ar-khata.firebaseapp.com",
@@ -247,36 +360,59 @@ const FIREBASE_CONFIG = {
   appId: "1:794970715291:android:429b0e24d75e221d7ac23e"
 };
 const FB_VER = "10.12.2";
-/* ================================================================ */
+/* ========================== */
 
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const icon = (n, cls) => '<svg class="ic'+(cls?" "+cls:"")+'"><use href="#i-'+n+'"/></svg>';
 const BN = "০১২৩৪৫৬৭৮৯";
 const toEn = s => String(s ?? "").replace(/[০-৯]/g, d => BN.indexOf(d));
-function bnNum(n){ try { return Number(n).toLocaleString("bn-BD",{maximumFractionDigits:2}); } catch(e){ return String(n); } }
+const bnDigits = s => String(s ?? "").replace(/[0-9]/g, d => BN[d]);
+function bnNum(n){ try { return Number(n).toLocaleString("bn-BD",{maximumFractionDigits:2}); } catch(e){ return bnDigits(n); } }
 function money(n){ n = Math.round((+n||0)*100)/100; return "৳" + bnNum(Math.abs(n)); }
 function pad(n){ return String(n).padStart(2,"0"); }
 function ymd(d){ return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate()); }
 function todayStr(){ return ymd(new Date()); }
 function shiftDay(s,k){ const [y,m,d]=s.split("-").map(Number); return ymd(new Date(y,m-1,d+k)); }
 function bnDate(s, yr){ if(!s) return ""; const [y,m,d]=s.split("-").map(Number); try { return new Date(y,m-1,d).toLocaleDateString("bn-BD",{day:"numeric",month:"long",...(yr?{year:"numeric"}:{})}); } catch(e){ return s; } }
-function bnTime(t){ try { return new Date(t).toLocaleTimeString("bn-BD",{hour:"numeric",minute:"2-digit"}); } catch(e){ return ""; } }
-function parseAmt(v){ const n = parseFloat(toEn(v).replace(/,/g,"")); return isFinite(n) ? Math.round(n*100)/100 : NaN; }
+function bnTime(t){ if(!t) return ""; try { return new Date(t).toLocaleTimeString("bn-BD",{hour:"numeric",minute:"2-digit"}); } catch(e){ return ""; } }
+function dayWord(s){ const t=todayStr(); return s===t ? "আজ" : s===shiftDay(t,-1) ? "গতকাল" : bnDate(s, s.slice(0,4)!==t.slice(0,4)); }
+function ago(ts){ if(!ts) return ""; const d=ymd(new Date(ts)); return dayWord(d)+(d>=shiftDay(todayStr(),-1)?", "+bnTime(ts):""); }
+function parseAmt(v){ const n = parseFloat(toEn(v).replace(/[,\s৳]/g,"")); return isFinite(n) ? Math.round(n*100)/100 : NaN; }
 const eff = e => e.t === "dilam" ? +e.amt : -e.amt;
 function phoneBD(p){ p = toEn(p).replace(/\D/g,""); if(p.startsWith("880")) return p; if(p.startsWith("0")) return "88"+p; return p; }
+const AVC = [["#E3F0FB","#1D5E9A"],["#FDECE2","#A4471B"],["#E6F4EA","#1E7341"],["#F1E8FA","#6C3BA0"],["#FFF3D6","#8A6100"],["#E2F3F3","#17706E"],["#FBE7EE","#A33358"]];
+function avStyle(name){ let h=0; for(const ch of String(name||"")) h=(h*31+ch.codePointAt(0))>>>0; const [b,f]=AVC[h%AVC.length]; return 'style="background:'+b+';color:'+f+'"'; }
+function initial(name){ const s=String(name||"?").trim(); const m=s.match(/^[ঀ-৿][া-ৌৗঁ-ঃ়]*/); return m ? m[0] : (s.charAt(0).toUpperCase()||"?"); }
 let toastT;
-function toast(msg){ const t=$("#toast"); t.textContent=msg; t.hidden=false; clearTimeout(toastT); toastT=setTimeout(()=>t.hidden=true, 2200); }
+function toast(msg){ const t=$("#toast"); t.textContent=msg; t.hidden=false; clearTimeout(toastT); toastT=setTimeout(()=>t.hidden=true, 2400); }
 
-/* ---------- পেছনে যাওয়ার বাটন (Android back) ---------- */
-const USE_HISTORY = !window.HK_FORCE_DEMO;
+/* ---------- পেছনে যাওয়া (Android back বাটনসহ) ---------- */
+const USE_HISTORY = !window.HK_NO_HISTORY;
 const layers = [];
+let navTarget = null, navThen = [];
 function pushLayer(close){ layers.push(close); if(USE_HISTORY){ try{ history.pushState({hk:layers.length},""); }catch(e){} } }
-function popLayer(){ if(!layers.length) return; if(USE_HISTORY){ history.back(); } else { layers.pop()(); } }
-window.addEventListener("popstate", () => { const c = layers.pop(); if(c) c(); });
+function popTo(depth, then){
+  depth = Math.max(0, depth);
+  if(then) navThen.push(then);
+  if(depth >= layers.length){ flushThen(); return; }
+  if(USE_HISTORY){
+    if(navTarget !== null && navTarget <= depth) return;
+    navTarget = depth; history.go(depth - layers.length);
+  } else { while(layers.length > depth) layers.pop()(); flushThen(); }
+}
+function popLayer(then){ popTo((navTarget ?? layers.length) - 1, then); }
+function flushThen(){ const t = navThen; navThen = []; t.forEach(f=>{ try{f()}catch(e){} }); }
+window.addEventListener("popstate", e => {
+  const t = (e.state && e.state.hk) || 0;
+  navTarget = null;
+  while(layers.length > t) layers.pop()();
+  flushThen();
+});
 
-/* ================= ডেমো স্টোর (ফোনের ভেতরে) ================= */
+/* ================= ডেমো স্টোর ================= */
 function makeDemoStore(){
-  const KEY = "hk-demo-v1";
+  const KEY = "hk-demo-v2";
   let db = null;
   try { db = JSON.parse(localStorage.getItem(KEY) || "null"); } catch(e){}
   const subs = new Set();
@@ -284,8 +420,8 @@ function makeDemoStore(){
   if(!db){
     const t = todayStr(), now = Date.now(), H = 3600e3;
     const P = (id,name,phone,kind,lastAt) => ({id,name,phone,kind,bal:0,createdAt:now,lastAt});
-    db = { profile:{shop:"মায়ের দোয়া স্টোর (উদাহরণ)"},
-      parties:[P("p1","রহিম মিয়া","01711000001","customer",now-1*H),P("p2","সালমা খাতুন","01811000002","customer",now-5*H),P("p3","হাসান (চা দোকান)","01911000003","customer",now-30*H),P("p4","করিম শেখ","","customer",now-70*H),P("p5","মোল্লা ট্রেডার্স","01611000005","supplier",now-20*H)],
+    db = { profile:{shop:"মায়ের দোয়া স্টোর"},
+      parties:[P("p1","রহিম মিয়া","01711000001","customer",now-1*H),P("p2","সালমা খাতুন","01811000002","customer",now-5*H),P("p3","হাসান (চা দোকান)","01911000003","customer",now-30*H),P("p4","করিম শেখ","","customer",now-70*H),P("p6","আবুল হোসেন","01511000006","customer",now-50*H),P("p5","মোল্লা ট্রেডার্স","01611000005","supplier",now-20*H)],
       entries:[], cash:[] };
     const E = (pid,t,amt,note,date,at) => { db.entries.push({id:uid(),pid,t,amt,note,date,at}); const p=db.parties.find(x=>x.id===pid); p.bal+= t==="dilam"?amt:-amt; };
     E("p1","dilam",850,"চাল ৫ কেজি, ডাল ১ কেজি",shiftDay(t,-6),now-140*H);
@@ -296,6 +432,7 @@ function makeDemoStore(){
     E("p3","dilam",2150,"চিনি, চা পাতা, বিস্কুট",shiftDay(t,-1),now-30*H);
     E("p4","dilam",400,"আগের হিসাব",shiftDay(t,-3),now-70*H);
     E("p4","pelam",400,"সব শোধ",shiftDay(t,-3),now-70*H);
+    E("p6","pelam",300,"অগ্রিম দিয়ে গেল",shiftDay(t,-2),now-50*H);
     E("p5","pelam",12000,"চাল ২ বস্তা (বাকিতে)",shiftDay(t,-4),now-96*H);
     E("p5","dilam",5000,"নগদ পরিশোধ",shiftDay(t,-1),now-20*H);
     db.cash.push({id:uid(),t:"sale",amt:3450,note:"সকালের বেচা",date:t,at:now-6*H},{id:uid(),t:"sale",amt:2780,note:"বিকেলের বেচা",date:t,at:now-2*H},{id:uid(),t:"expense",amt:150,note:"ভ্যান ভাড়া",date:t,at:now-4*H});
@@ -316,10 +453,10 @@ function makeDemoStore(){
     updateParty(id,p){ Object.assign(P(id),p); save(); },
     async deleteParty(id){ db.parties=db.parties.filter(p=>p.id!==id); db.entries=db.entries.filter(e=>e.pid!==id); save(); },
     addEntry(e){ const now=Date.now(); db.entries.push({...e,id:uid(),at:now}); const p=P(e.pid); p.bal+=eff(e); p.lastAt=now; save(); },
-    updateEntry(o,n){ const x=db.entries.find(e=>e.id===o.id); Object.assign(x,n); const p=P(o.pid); p.bal+=eff(n)-eff(o); p.lastAt=Date.now(); save(); },
+    updateEntry(o,n){ const x=db.entries.find(e=>e.id===o.id); Object.assign(x,{t:n.t,amt:n.amt,note:n.note,date:n.date}); const p=P(o.pid); p.bal+=eff(n)-eff(o); p.lastAt=Date.now(); save(); },
     deleteEntry(o){ db.entries=db.entries.filter(e=>e.id!==o.id); const p=P(o.pid); if(p) p.bal-=eff(o); save(); },
     addCash(x){ db.cash.push({...x,id:uid(),at:Date.now()}); save(); },
-    updateCash(o,n){ Object.assign(db.cash.find(x=>x.id===o.id),n); save(); },
+    updateCash(o,n){ Object.assign(db.cash.find(x=>x.id===o.id),{t:n.t,amt:n.amt,note:n.note,date:n.date}); save(); },
     deleteCash(o){ db.cash=db.cash.filter(x=>x.id!==o.id); save(); },
     async exportAll(){ return c({parties:db.parties,entries:db.entries,cash:db.cash}); }
   };
@@ -332,7 +469,6 @@ async function makeFirebaseStore(){
   const app = A.initializeApp(FIREBASE_CONFIG);
   let auth;
   if(window.Android){
-    // অ্যাপের ভেতরে popup/redirect লাগে না (লগইন হয় ফোনের Google দিয়ে)
     try { auth = AU.initializeAuth(app, {persistence:[AU.indexedDBLocalPersistence, AU.browserLocalPersistence]}); }
     catch(e){ auth = AU.getAuth(app); }
   } else auth = AU.getAuth(app);
@@ -386,171 +522,196 @@ async function makeFirebaseStore(){
 
 /* ================= অ্যাপের অবস্থা ================= */
 let store = null;
-const S = { view:"khata", kind:"customer", q:"", parties:[], profile:{}, day:todayStr(), dayData:{cash:[],entries:[]}, pid:null, pEntries:[], online:navigator.onLine, pending:false, user:null };
+const S = { view:"khata", kind:"customer", q:"", parties:[], profile:{}, day:todayStr(), dayData:{cash:[],entries:[]}, pid:null, pvDepth:0, pvSeen:false, pEntries:[], online:navigator.onLine, pending:false, user:null };
 let unsubs = [], unDay = null, unParty = null;
 const partyById = id => S.parties.find(p=>p.id===id);
 const kindName = k => k==="supplier" ? "মহাজন" : "কাস্টমার";
-function balText(bal){ if(Math.abs(bal)<0.005) return {cls:"zero",lbl:"হিসাব শেষ",amt:"৳০"}; return bal>0 ? {cls:"get",lbl:"পাবো",amt:money(bal)} : {cls:"give",lbl:"দেবো",amt:money(bal)}; }
+function balInfo(bal){ if(Math.abs(bal)<0.005) return {cls:"zero",lbl:"হিসাব শেষ",amt:"৳০"}; return bal>0 ? {cls:"get",lbl:"পাবো",amt:money(bal)} : {cls:"give",lbl:"দেবো",amt:money(bal)}; }
 
-/* ---------- খাতা (তালিকা) ---------- */
+/* ---------- বাকির খাতা ---------- */
 function renderKhata(){
-  let get=0, give=0;
-  S.parties.forEach(p=>{ if(p.bal>0) get+=p.bal; else give-=p.bal; });
+  let get=0, give=0, nGet=0, nGive=0;
+  S.parties.forEach(p=>{ if(p.bal>0.004){ get+=p.bal; nGet++; } else if(p.bal<-0.004){ give-=p.bal; nGive++; } });
   $("#tGet").textContent=money(get); $("#tGive").textContent=money(give);
+  $("#tGetN").textContent=bnNum(nGet)+" জনের কাছে"; $("#tGiveN").textContent=bnNum(nGive)+" জনকে";
   const cnt = k => S.parties.filter(p=>(p.kind||"customer")===k).length;
   $("#tabC").textContent="কাস্টমার ("+bnNum(cnt("customer"))+")";
   $("#tabS").textContent="মহাজন ("+bnNum(cnt("supplier"))+")";
   $("#tabC").setAttribute("aria-selected", S.kind==="customer"); $("#tabS").setAttribute("aria-selected", S.kind==="supplier");
-  $("#fab").textContent = "+ নতুন "+kindName(S.kind);
+  $("#fabT").textContent = "নতুন "+kindName(S.kind);
   const q = toEn(S.q.trim()).toLowerCase();
-  const rows = S.parties.filter(p=>(p.kind||"customer")===S.kind)
-    .filter(p=>!q || (p.name||"").toLowerCase().includes(q) || toEn(p.phone||"").includes(q))
+  const all = S.parties.filter(p=>(p.kind||"customer")===S.kind);
+  const rows = all.filter(p=>!q || (p.name||"").toLowerCase().includes(q) || toEn(p.phone||"").includes(q))
     .sort((a,b)=>(b.lastAt||0)-(a.lastAt||0));
+  $("#countRow").innerHTML = rows.length ? '<span>'+(q?"খোঁজার ফল":"সর্বশেষ লেনদেন আগে")+'</span><span>'+bnNum(rows.length)+' জন</span>' : "";
   if(!rows.length){
-    $("#plist").innerHTML = '<div class="empty">'+(q ? "এই নামে কাউকে পাওয়া যায়নি।" : "এখনো কোনো "+kindName(S.kind)+" নেই।<br>নিচের <b>+ নতুন "+kindName(S.kind)+"</b> চাপুন।")+'</div>';
+    $("#plist").innerHTML = '<div class="empty"><div class="eic">'+icon(q?"search":"users")+'</div>'+(q ? "এই নামে কাউকে পাওয়া যায়নি।" : "এখনো কোনো "+kindName(S.kind)+" নেই।<br>নিচের <b>নতুন "+kindName(S.kind)+"</b> বাটন চাপুন।")+'</div>';
     return;
   }
   $("#plist").innerHTML = rows.map(p=>{
-    const b = balText(p.bal||0);
-    const col = b.cls==="get"?"c-get":b.cls==="give"?"c-give":"";
-    return '<button class="prow" data-pid="'+esc(p.id)+'"><span class="av">'+esc((p.name||"?").trim().charAt(0))+'</span><span class="pmid"><span class="pname">'+esc(p.name)+'</span><span class="psub">'+(p.phone?esc(bnNum0(p.phone)):"মোবাইল নম্বর নেই")+'</span></span><span class="pamt"><b class="num '+col+'">'+b.amt+'</b><small>'+b.lbl+'</small></span></button>';
+    const b = balInfo(p.bal||0);
+    return '<button class="row" data-pid="'+esc(p.id)+'"><span class="av" '+avStyle(p.name)+'>'+esc(initial(p.name))+'</span><span class="mid"><span class="name">'+esc(p.name)+'</span><span class="sub">'+(p.lastAt?ago(p.lastAt):(p.phone?esc(bnDigits(p.phone)):""))+'</span></span><span class="amt"><b class="num '+(b.cls==="get"?"c-get":b.cls==="give"?"c-give":"c-muted")+'">'+b.amt+'</b><span class="chip '+b.cls+'">'+b.lbl+'</span></span></button>';
   }).join("");
 }
-function bnNum0(s){ return String(s).replace(/[0-9]/g, d=>BN[d]); }
 
 /* ---------- একজনের খাতা ---------- */
 function openParty(pid){
-  S.pid = pid; S.pEntries = [];
-  $("#pv").hidden = false; document.body.style.overflow="hidden";
+  if(!partyById(pid)) return;
+  S.pid = pid; S.pEntries = []; S.pvSeen = false; S.pvDepth = layers.length;
+  $("#pv").hidden = false; $("#pv").scrollTop = 0; document.body.style.overflow="hidden";
   renderParty();
   if(unParty) unParty();
   unParty = store.onPartyEntries(pid, list => { S.pEntries = list; renderParty(); });
   pushLayer(closeParty);
 }
-function closeParty(){ $("#pv").hidden = true; document.body.style.overflow=""; S.pid=null; if(unParty){unParty();unParty=null;} }
+function closeParty(){ $("#pv").hidden = true; $("#pv").innerHTML=""; document.body.style.overflow=""; S.pid=null; if(unParty){unParty();unParty=null;} }
 function tagadaText(p){ const shop=S.profile.shop||"আমাদের দোকান"; return "আসসালামু আলাইকুম, "+p.name+"। "+shop+"-এ আপনার বাকি "+money(p.bal)+"। সুবিধামতো সময়ে পরিশোধ করার অনুরোধ রইল। ধন্যবাদ।"; }
 function renderParty(){
-  const p = partyById(S.pid); if(!p){ if(S.pid) popLayer(); return; }
-  const b = balText(p.bal||0), sup = p.kind==="supplier";
+  if(!S.pid) return;
+  const p = partyById(S.pid);
+  if(!p){ if(S.pvSeen) popTo(S.pvDepth); return; }
+  S.pvSeen = true;
+  const b = balInfo(p.bal||0), sup = p.kind==="supplier";
   const ph = p.phone ? phoneBD(p.phone) : "";
-  const canTag = ph && p.bal>0;
-  const ents = [...S.pEntries].sort((x,y)=> (y.date||"").localeCompare(x.date||"") || (y.at||0)-(x.at||0));
-  const rows = ents.length ? ents.map(e=>'<button class="lrow" data-eid="'+esc(e.id)+'"><span><span class="ld">'+bnDate(e.date,true)+'</span><span class="ln">'+(esc(e.note)||"—")+'</span></span><span class="num r">'+(e.t==="dilam"?money(e.amt):"")+'</span><span class="num g">'+(e.t==="pelam"?money(e.amt):"")+'</span></button>').join("")
-    : '<div class="empty">এখনো কোনো লেনদেন নেই।<br>নিচের বাটন দিয়ে প্রথম হিসাব লিখুন।</div>';
+  const canTag = !!ph && p.bal>0;
+  const asc = [...S.pEntries].sort((x,y)=> (x.date||"").localeCompare(y.date||"") || (x.at||0)-(y.at||0));
+  let run = 0; const balAfter = {};
+  asc.forEach(e=>{ run += eff(e); balAfter[e.id] = run; });
+  const ents = asc.reverse();
+  const rows = ents.length ? ents.map(e=>{
+    const ba = balInfo(balAfter[e.id]);
+    return '<button class="lrow" data-eid="'+esc(e.id)+'"><span><span class="ln">'+(esc(e.note)||(e.t==="dilam"?"দিলাম":"পেলাম"))+'</span><span class="ld">'+dayWord(e.date)+(e.at?" · "+bnTime(e.at):"")+'</span><span class="lb '+(ba.cls==="get"?"c-get":ba.cls==="give"?"c-give":"c-muted")+'">জের '+ba.amt+(ba.cls==="zero"?"":" "+ba.lbl)+'</span></span><span class="r">'+(e.t==="dilam"?money(e.amt):"")+'</span><span class="g">'+(e.t==="pelam"?money(e.amt):"")+'</span></button>';
+  }).join("") : '<div class="empty"><div class="eic">'+icon("book")+'</div>এখনো কোনো লেনদেন নেই।<br>নিচের বাটন দিয়ে প্রথম হিসাব লিখুন।</div>';
+  const balLbl = b.cls==="get" ? (sup?"মহাজনের কাছে পাবো":"আমি পাবো") : b.cls==="give" ? (sup?"মহাজনকে দেবো":"আমি দেবো") : "কোনো বাকি নেই";
   $("#pv").innerHTML =
-    '<div class="lhead"><div class="wrap"><button class="ib" id="pvBack" aria-label="ফিরে যান"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M15 6l-6 6 6 6"/></svg></button><div class="lt"><b>'+esc(p.name)+'</b><small>'+kindName(p.kind)+(p.phone?" · "+esc(bnNum0(p.phone)):"")+'</small></div><button class="ib" id="pvEdit" aria-label="নাম/নম্বর বদলান"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20h4L19 9l-4-4L4 16z"/></svg></button></div></div>'+
+    '<div class="lhead"><div class="wrap"><button class="ib" id="pvBack" aria-label="ফিরে যান">'+icon("back")+'</button><span class="av sm" '+avStyle(p.name)+'>'+esc(initial(p.name))+'</span><div class="lt"><b>'+esc(p.name)+'</b><small>'+kindName(p.kind)+(p.phone?" · "+esc(bnDigits(p.phone)):"")+'</small></div><button class="ib" id="pvEdit" aria-label="তথ্য বদলান">'+icon("edit")+'</button></div></div>'+
+    '<div class="hero"><div class="wrap" style="padding-top:6px">'+
+      '<div class="balcard"><div class="balrow"><div><small>'+balLbl+'</small><b class="'+(b.cls==="get"?"c-get":b.cls==="give"?"c-give":"c-muted")+'">'+b.amt+'</b></div><span class="chip '+b.cls+'">'+bnNum(ents.length)+'টি লেনদেন</span></div>'+
+      '<div class="acts"><a class="act '+(ph?"":"dis")+'" href="'+(ph?"tel:+"+ph:"#")+'">'+icon("phone")+'কল</a><a class="act '+(canTag?"":"dis")+'" href="'+(canTag?"sms:+"+ph+"?body="+encodeURIComponent(tagadaText(p)):"#")+'">'+icon("msg")+'তাগাদা SMS</a><a class="act '+(canTag?"":"dis")+'" target="_blank" rel="noopener" href="'+(canTag?"https://wa.me/"+ph+"?text="+encodeURIComponent(tagadaText(p)):"#")+'">'+icon("chat")+'WhatsApp</a></div></div>'+
+    '</div></div>'+
     '<div class="wrap" style="padding-bottom:calc(110px + env(safe-area-inset-bottom,0px))">'+
-      '<div class="bal '+b.cls+'"><span>'+(b.cls==="get"?(sup?"মহাজনের কাছে পাবো":"আমি পাবো"):b.cls==="give"?(sup?"মহাজনকে দেবো":"আমি দেবো"):"কোনো বাকি নেই")+'</span><b class="num">'+b.amt+'</b></div>'+
-      '<div class="acts"><a class="'+(ph?"":"dis")+'" href="'+(ph?"tel:+"+ph:"#")+'">কল করুন</a><a class="'+(canTag?"":"dis")+'" href="'+(canTag?"sms:+"+ph+"?body="+encodeURIComponent(tagadaText(p)):"#")+'">তাগাদা SMS</a><a class="'+(canTag?"":"dis")+'" target="_blank" rel="noopener" href="'+(canTag?"https://wa.me/"+ph+"?text="+encodeURIComponent(tagadaText(p)):"#")+'">WhatsApp</a></div>'+
-      (ph?'':'<div class="hint">মোবাইল নম্বর যোগ করলে কল আর তাগাদা পাঠানো যাবে (উপরে ✎ চাপুন)।</div>')+
-      '<div class="ledger"><div class="lrow h"><span>তারিখ ও বিবরণ</span><span>দিলাম</span><span>পেলাম</span></div>'+rows+'</div>'+
+      (ph?'':'<div class="hint">মোবাইল নম্বর যোগ করলে কল আর তাগাদা পাঠানো যাবে। উপরে ✎ চাপুন।</div>')+
+      '<div class="ledger"><div class="lrow h"><span>বিবরণ ও জের</span><span>দিলাম</span><span>পেলাম</span></div>'+rows+'</div>'+
       '<div class="hint">'+(sup?"মহাজন থেকে বাকিতে মাল আনলে <b>পেলাম</b>, টাকা দিলে <b>দিলাম</b>।":"বাকিতে মাল দিলে <b>দিলাম</b>, টাকা জমা পেলে <b>পেলাম</b>।")+' কোনো লাইন ভুল হলে সেটার ওপর চাপ দিয়ে ঠিক করুন।</div>'+
     '</div>'+
-    '<div class="bottombar"><div class="wrap"><button class="big red" id="pvGave">দিলাম<small>'+(sup?"টাকা দিলাম":"বাকি / মাল দিলাম")+'</small></button><button class="big green" id="pvGot">পেলাম<small>'+(sup?"বাকিতে মাল পেলাম":"টাকা পেলাম")+'</small></button></div></div>';
-  $("#pvBack").onclick = popLayer;
+    '<div class="bottombar"><div class="wrap"><button class="big red" id="pvGave">'+icon("outa")+'<span>দিলাম<small>'+(sup?"টাকা দিলাম":"বাকি / মাল দিলাম")+'</small></span></button><button class="big green" id="pvGot">'+icon("in")+'<span>পেলাম<small>'+(sup?"বাকিতে মাল পেলাম":"টাকা পেলাম")+'</small></span></button></div></div>';
+  $("#pvBack").onclick = () => popTo(S.pvDepth);
   $("#pvEdit").onclick = () => partySheet(p);
   $("#pvGave").onclick = () => entrySheet(p,"dilam");
   $("#pvGot").onclick = () => entrySheet(p,"pelam");
   $("#pv").querySelectorAll(".lrow[data-eid]").forEach(el=>el.onclick=()=>{ const e=S.pEntries.find(x=>x.id===el.dataset.eid); if(e) entrySheet(p,e.t,e); });
-  $("#pv").querySelectorAll(".acts .dis").forEach(a=>a.onclick=ev=>ev.preventDefault());
+  $("#pv").querySelectorAll(".act.dis").forEach(a=>a.onclick=ev=>ev.preventDefault());
 }
 
-/* ---------- নিচ থেকে ওঠা ফর্ম ---------- */
-function openSheet(html, bind){
+/* ---------- ফর্ম (নিচ থেকে ওঠে) ---------- */
+function openSheet(title, html, bind){
   const w = $("#sheetWrap");
-  w.innerHTML = '<div class="scrim" id="scrim"><div class="sheet" role="dialog" aria-modal="true">'+html+'</div></div>';
+  w.innerHTML = '<div class="scrim" id="scrim"><div class="sheet" role="dialog" aria-modal="true"><div class="grab"></div><div class="shead"><h2>'+title+'</h2><button class="ib" data-close aria-label="বন্ধ">'+icon("x","sm")+'</button></div>'+html+'</div></div>';
   w.hidden = false;
   $("#scrim").addEventListener("click", ev=>{ if(ev.target.id==="scrim") popLayer(); });
-  w.querySelectorAll("[data-close]").forEach(b=>b.onclick=popLayer);
+  w.querySelectorAll("[data-close]").forEach(b=>b.onclick=()=>popLayer());
   pushLayer(()=>{ w.hidden=true; w.innerHTML=""; });
   bind(w);
 }
-function amtField(v){ return '<label class="f"><span>টাকার পরিমাণ</span><input class="amt num" id="fAmt" inputmode="decimal" autocomplete="off" placeholder="০" value="'+(v!=null?esc(v):"")+'"></label>'; }
-function dateField(v){ return '<label class="f"><span>তারিখ</span><input type="date" id="fDate" value="'+esc(v||todayStr())+'"></label>'; }
+function amtField(v){ return '<label class="f"><span>টাকার পরিমাণ</span><div class="money"><i>৳</i><input class="num" id="fAmt" inputmode="decimal" autocomplete="off" placeholder="০" value="'+(v!=null?esc(bnDigits(v)):"")+'"></div></label>'; }
+function dateField(v){ return '<label class="f"><span>তারিখ</span><input class="field" type="date" id="fDate" max="'+todayStr()+'" value="'+esc(v||todayStr())+'"></label>'; }
 function readAmt(w){ const a=parseAmt(w.querySelector("#fAmt").value); if(!(a>0)){ toast("টাকার পরিমাণ লিখুন"); w.querySelector("#fAmt").focus(); return null; } return a; }
 function confirmBox(w, text, onYes){
   let box = w.querySelector(".confirm");
   if(!box){ box=document.createElement("div"); box.className="confirm"; w.querySelector(".sheet").appendChild(box); }
-  box.innerHTML = esc(text)+'<div class="sacts" style="margin-top:10px"><button class="btn" id="cNo">না</button><button class="btn dang" id="cYes">হ্যাঁ, মুছে দিন</button></div>';
+  box.innerHTML = esc(text)+'<div class="btnrow"><button class="btn" id="cNo">না, থাক</button><button class="btn dang" id="cYes">হ্যাঁ, মুছে দিন</button></div>';
   box.querySelector("#cNo").onclick=()=>box.remove();
   box.querySelector("#cYes").onclick=onYes;
   box.scrollIntoView({block:"nearest"});
 }
+function bindTypeColor(w, red, green){
+  const save = w.querySelector("#fSave");
+  const upd = () => { const v = w.querySelector('input[name="fT"]:checked').value; save.className = "save "+(v===red?"red":v===green?"green":""); };
+  w.querySelectorAll('input[name="fT"]').forEach(r=>r.onchange=upd); upd();
+}
 
 function partySheet(p){
   const isNew = !p, k = p ? (p.kind||"customer") : S.kind;
-  openSheet(
-    '<h2>'+(isNew?"নতুন "+kindName(k):"তথ্য বদলান")+'</h2>'+
-    '<label class="f"><span>নাম</span><input id="fName" autocomplete="off" value="'+esc(p?p.name:"")+'" placeholder="যেমন: রহিম মিয়া"></label>'+
-    '<label class="f"><span>মোবাইল নম্বর (না থাকলে খালি রাখুন)</span><input id="fPhone" inputmode="tel" autocomplete="off" value="'+esc(p?p.phone||"":"")+'" placeholder="01XXXXXXXXX"></label>'+
+  openSheet(isNew?"নতুন "+kindName(k):"তথ্য বদলান",
+    '<label class="f"><span>নাম</span><input class="field" id="fName" autocomplete="off" value="'+esc(p?p.name:"")+'" placeholder="যেমন: রহিম মিয়া"></label>'+
+    '<label class="f"><span>মোবাইল নম্বর (না থাকলে খালি রাখুন)</span><input class="field" id="fPhone" inputmode="tel" autocomplete="off" value="'+esc(p?p.phone||"":"")+'" placeholder="01XXXXXXXXX"></label>'+
     '<div class="f"><span>ধরন</span><div class="seg"><label><input type="radio" name="fKind" value="customer" '+(k==="customer"?"checked":"")+'><span>কাস্টমার</span></label><label><input type="radio" name="fKind" value="supplier" '+(k==="supplier"?"checked":"")+'><span>মহাজন</span></label></div></div>'+
-    (isNew ? '<label class="f"><span>আগের কোনো বাকি থাকলে (না থাকলে খালি রাখুন)</span><input class="num" id="fOpen" inputmode="decimal" autocomplete="off" placeholder="০"></label><div class="f"><div class="seg tr"><label><input type="radio" name="fOpenT" value="dilam" checked><span>সে আমাকে দেবে</span></label><label><input type="radio" name="fOpenT" value="pelam"><span>আমি তাকে দেবো</span></label></div></div>' : '')+
-    '<div class="sacts"><button class="btn" data-close>বাতিল</button><button class="btn pri" id="fSave">সেভ করুন</button></div>'+
-    (isNew ? '' : '<button class="btn dang" id="fDel" style="width:100%;margin-top:12px">এই '+kindName(k)+' আর তার সব হিসাব মুছুন</button>'),
+    (isNew ? '<label class="f"><span>আগের কোনো বাকি থাকলে (না থাকলে খালি রাখুন)</span><div class="money"><i>৳</i><input class="num" id="fOpen" inputmode="decimal" autocomplete="off" placeholder="০"></div></label><div class="f"><div class="seg tr"><label><input type="radio" name="fOpenT" value="dilam" checked><span>সে আমাকে দেবে</span></label><label><input type="radio" name="fOpenT" value="pelam"><span>আমি তাকে দেবো</span></label></div></div>' : '')+
+    '<button class="save" id="fSave">'+(isNew?"যোগ করুন":"সেভ করুন")+'</button>'+
+    (isNew ? '' : '<button class="del" id="fDel">'+icon("trash","sm")+'এই '+kindName(k)+' আর তার সব হিসাব মুছুন</button>'),
     w => {
-      w.querySelector("#fName").focus();
+      if(isNew) setTimeout(()=>w.querySelector("#fName").focus(), 60);
       w.querySelector("#fSave").onclick = () => {
         const name = w.querySelector("#fName").value.trim();
-        if(!name){ toast("নাম লিখুন"); return; }
+        if(!name){ toast("নাম লিখুন"); w.querySelector("#fName").focus(); return; }
         const data = { name, phone: toEn(w.querySelector("#fPhone").value).replace(/[^\d+]/g,""), kind: w.querySelector('input[name="fKind"]:checked').value };
         if(isNew){
           const oa = parseAmt(w.querySelector("#fOpen").value);
           const open = oa>0 ? {amt:oa, t:w.querySelector('input[name="fOpenT"]:checked').value} : null;
           const id = store.addParty(data, open);
-          S.kind = data.kind; popLayer(); toast("যোগ হয়েছে");
-          setTimeout(()=>{ if(partyById(id)) openParty(id); }, 350);
-        } else { store.updateParty(p.id, data); popLayer(); toast("বদলানো হয়েছে"); }
+          S.kind = data.kind; renderKhata();
+          popLayer(() => { toast("যোগ হয়েছে"); setTimeout(()=>openParty(id), 30); });
+        } else { store.updateParty(p.id, data); popLayer(() => toast("বদলানো হয়েছে")); }
       };
       const del = w.querySelector("#fDel");
       if(del) del.onclick = () => confirmBox(w, p.name+" আর তার সব লেনদেন একেবারে মুছে যাবে। নিশ্চিত?", async () => {
         try { await store.deleteParty(p.id); } catch(e){ toast("মুছতে নেট লাগবে, পরে চেষ্টা করুন"); return; }
-        popLayer(); setTimeout(()=>{ if(S.pid) popLayer(); }, 60); toast("মুছে ফেলা হয়েছে");
+        popTo(S.pid===p.id ? S.pvDepth : layers.length-1, () => toast("মুছে ফেলা হয়েছে"));
       });
     });
 }
 
 function entrySheet(p, t, e){
   const sup = p.kind==="supplier";
-  openSheet(
-    '<h2>'+esc(p.name)+' — '+(e?"লেনদেন ঠিক করুন":"নতুন লেনদেন")+'</h2>'+
+  openSheet(e?"লেনদেন ঠিক করুন":esc(p.name),
     '<div class="f"><div class="seg tr"><label><input type="radio" name="fT" value="dilam" '+(t==="dilam"?"checked":"")+'><span>দিলাম'+(sup?" (টাকা)":" (বাকি)")+'</span></label><label><input type="radio" name="fT" value="pelam" '+(t==="pelam"?"checked":"")+'><span>পেলাম'+(sup?" (মাল)":" (টাকা)")+'</span></label></div></div>'+
     amtField(e?e.amt:null)+
-    '<label class="f"><span>বিবরণ (কী মাল / কীভাবে টাকা দিল)</span><input id="fNote" autocomplete="off" value="'+esc(e?e.note:"")+'" placeholder="'+(sup?"যেমন: চাল ২ বস্তা":"যেমন: চাল ৫ কেজি, তেল ১ লিটার")+'"></label>'+
+    '<label class="f"><span>বিবরণ (কী মাল / কীভাবে টাকা দিল)</span><input class="field" id="fNote" autocomplete="off" value="'+esc(e?e.note:"")+'" placeholder="'+(sup?"যেমন: চাল ২ বস্তা":"যেমন: চাল ৫ কেজি, তেল ১ লিটার")+'"></label>'+
     dateField(e?e.date:null)+
-    '<div class="sacts"><button class="btn" data-close>বাতিল</button><button class="btn pri" id="fSave">সেভ করুন</button></div>'+
-    (e?'<button class="btn dang" id="fDel" style="width:100%;margin-top:12px">এই লেনদেন মুছুন</button>':''),
+    '<button class="save" id="fSave">সেভ করুন</button>'+
+    (e?'<button class="del" id="fDel">'+icon("trash","sm")+'এই লেনদেন মুছুন</button>':''),
     w => {
-      setTimeout(()=>w.querySelector("#fAmt").focus(), 50);
+      bindTypeColor(w,"dilam","pelam");
+      if(!e) setTimeout(()=>w.querySelector("#fAmt").focus(), 60);
       w.querySelector("#fSave").onclick = () => {
         const amt = readAmt(w); if(amt==null) return;
         const n = { pid:p.id, t:w.querySelector('input[name="fT"]:checked').value, amt, note:w.querySelector("#fNote").value.trim(), date:w.querySelector("#fDate").value||todayStr() };
         if(e) store.updateEntry(e,n); else store.addEntry(n);
-        popLayer(); toast(e?"ঠিক করা হয়েছে":"সেভ হয়েছে");
+        popLayer(() => toast(e?"ঠিক করা হয়েছে":"সেভ হয়েছে"));
       };
       const del = w.querySelector("#fDel");
-      if(del) del.onclick = () => confirmBox(w, money(e.amt)+"-এর এই লেনদেন মুছে যাবে। নিশ্চিত?", () => { store.deleteEntry(e); popLayer(); toast("মুছে ফেলা হয়েছে"); });
+      if(del) del.onclick = () => confirmBox(w, money(e.amt)+"-এর এই লেনদেন মুছে যাবে। নিশ্চিত?", () => { store.deleteEntry(e); popLayer(() => toast("মুছে ফেলা হয়েছে")); });
     });
 }
 
 function cashSheet(t, x){
-  openSheet(
-    '<h2>'+(x?"ঠিক করুন":(t==="sale"?"নগদ বেচা":"খরচ"))+'</h2>'+
+  openSheet(x?"ঠিক করুন":(t==="sale"?"নগদ বেচা":"খরচ"),
     '<div class="f"><div class="seg tr"><label><input type="radio" name="fT" value="sale" '+(t==="sale"?"checked":"")+'><span>নগদ বেচা</span></label><label><input type="radio" name="fT" value="expense" '+(t==="expense"?"checked":"")+'><span>খরচ</span></label></div></div>'+
     amtField(x?x.amt:null)+
-    '<label class="f"><span>বিবরণ</span><input id="fNote" autocomplete="off" value="'+esc(x?x.note:"")+'" placeholder="যেমন: সকালের বেচা / ভ্যান ভাড়া / বিদ্যুৎ বিল"></label>'+
+    '<label class="f"><span>বিবরণ</span><input class="field" id="fNote" autocomplete="off" value="'+esc(x?x.note:"")+'" placeholder="যেমন: সকালের বেচা / ভ্যান ভাড়া / বিদ্যুৎ বিল"></label>'+
     dateField(x?x.date:S.day)+
-    '<div class="sacts"><button class="btn" data-close>বাতিল</button><button class="btn pri" id="fSave">সেভ করুন</button></div>'+
-    (x?'<button class="btn dang" id="fDel" style="width:100%;margin-top:12px">এটা মুছুন</button>':''),
+    '<button class="save" id="fSave">সেভ করুন</button>'+
+    (x?'<button class="del" id="fDel">'+icon("trash","sm")+'এটা মুছুন</button>':''),
     w => {
-      setTimeout(()=>w.querySelector("#fAmt").focus(), 50);
+      bindTypeColor(w,"expense","sale");
+      if(!x) setTimeout(()=>w.querySelector("#fAmt").focus(), 60);
       w.querySelector("#fSave").onclick = () => {
         const amt = readAmt(w); if(amt==null) return;
         const n = { t:w.querySelector('input[name="fT"]:checked').value, amt, note:w.querySelector("#fNote").value.trim(), date:w.querySelector("#fDate").value||S.day };
         if(x) store.updateCash(x,n); else store.addCash(n);
-        popLayer(); toast("সেভ হয়েছে");
+        popLayer(() => toast("সেভ হয়েছে"));
       };
       const del = w.querySelector("#fDel");
-      if(del) del.onclick = () => confirmBox(w, "এটা মুছে যাবে। নিশ্চিত?", () => { store.deleteCash(x); popLayer(); toast("মুছে ফেলা হয়েছে"); });
+      if(del) del.onclick = () => confirmBox(w, "এটা মুছে যাবে। নিশ্চিত?", () => { store.deleteCash(x); popLayer(() => toast("মুছে ফেলা হয়েছে")); });
+    });
+}
+
+function shopSheet(){
+  openSheet("দোকানের নাম",
+    '<label class="f"><span>আপনার দোকানের নাম</span><input class="field" id="fShop" autocomplete="off" value="'+esc(S.profile.shop||"")+'" placeholder="যেমন: মায়ের দোয়া স্টোর"></label><button class="save" id="fSave">সেভ করুন</button>',
+    w => {
+      setTimeout(()=>w.querySelector("#fShop").focus(), 60);
+      w.querySelector("#fSave").onclick = () => { const v=w.querySelector("#fShop").value.trim(); if(!v){ toast("দোকানের নাম লিখুন"); return; } store.setProfile({shop:v}); popLayer(() => toast("সেভ হয়েছে")); };
     });
 }
 
@@ -558,35 +719,43 @@ function cashSheet(t, x){
 function watchDay(){ if(unDay) unDay(); unDay = store.onDay(S.day, d => { S.dayData = d; renderDay(); }); }
 function renderDay(){
   const t = todayStr();
-  $("#dLabel").innerHTML = (S.day===t?"আজ":S.day===shiftDay(t,-1)?"গতকাল":bnDate(S.day))+'<small>'+bnDate(S.day,true)+'</small>';
-  $("#dNext").disabled = S.day>=t; $("#dNext").style.opacity = S.day>=t ? .3 : 1;
+  $("#dLabel").innerHTML = dayWord(S.day)+'<small>'+bnDate(S.day,true)+'</small>';
+  $("#dNext").disabled = S.day>=t;
   const {cash, entries} = S.dayData;
   const sum = f => cash.filter(f).reduce((a,x)=>a+x.amt,0);
   const sale = sum(x=>x.t==="sale"), exp = sum(x=>x.t==="expense");
   const kindOf = e => (partyById(e.pid)||{}).kind || "customer";
   const es = (k,tt) => entries.filter(e=>kindOf(e)===k && e.t===tt).reduce((a,e)=>a+e.amt,0);
   const adai = es("customer","pelam"), bakiDilam = es("customer","dilam"), mahajon = es("supplier","dilam");
-  const cell = (l,v,c) => '<div class="dcell"><small>'+l+'</small><b class="num '+(c||"")+'">'+money(v)+'</b></div>';
-  $("#dgrid").innerHTML = cell("নগদ বেচা",sale,"c-give")+cell("বাকি আদায়",adai,"c-give")+cell("খরচ",exp,"c-get")+cell("মহাজনকে দেওয়া",mahajon,"c-get")+cell("নতুন বাকি দেওয়া",bakiDilam)+'<div class="dcell"><small>মোট লেনদেন</small><b class="num">'+bnNum(cash.length+entries.length)+' টি</b></div>';
+  const cell = (l,v,c) => '<div class="dcell"><small>'+l+'</small><b class="'+(c||"")+'">'+v+'</b></div>';
+  $("#dgrid").innerHTML = cell("নগদ বেচা",money(sale),"c-give")+cell("বাকি আদায়",money(adai),"c-give")+cell("খরচ",money(exp),"c-get")+cell("মহাজনকে দেওয়া",money(mahajon),"c-get")+cell("নতুন বাকি দেওয়া",money(bakiDilam))+cell("মোট লেনদেন",bnNum(cash.length+entries.length)+" টি");
   const net = sale+adai-exp-mahajon;
+  $("#netLbl").textContent = (S.day===t?"আজকের":dayWord(S.day)+"-এর")+" নগদ হিসাব";
   $("#dTotal").textContent = (net<0?"− ":"")+money(net);
   const items = [
-    ...cash.map(x=>({at:x.at||0, html:'<button class="drow" data-cid="'+esc(x.id)+'"><span class="tag '+(x.t==="sale"?"s":"x")+'">'+(x.t==="sale"?"বেচা":"খরচ")+'</span><span class="pmid"><span class="pname">'+(esc(x.note)||(x.t==="sale"?"নগদ বেচা":"খরচ"))+'</span><span class="psub">'+bnTime(x.at)+'</span></span><b class="num '+(x.t==="sale"?"c-give":"c-get")+'">'+money(x.amt)+'</b></button>'})),
-    ...entries.map(e=>{ const p=partyById(e.pid)||{name:"(মুছে ফেলা)"}; return {at:e.at||0, html:'<button class="drow" data-pid="'+esc(e.pid)+'"><span class="tag p">'+(e.t==="dilam"?"দিলাম":"পেলাম")+'</span><span class="pmid"><span class="pname">'+esc(p.name)+'</span><span class="psub">'+(esc(e.note)||"")+(e.note?" · ":"")+bnTime(e.at)+'</span></span><b class="num '+(e.t==="dilam"?"c-get":"c-give")+'">'+money(e.amt)+'</b></button>'}; })
+    ...cash.map(x=>({at:x.at||0, html:'<button class="row" data-cid="'+esc(x.id)+'"><span class="tag '+(x.t==="sale"?"s":"x")+'">'+icon(x.t==="sale"?"in":"outa")+'</span><span class="mid"><span class="name">'+(esc(x.note)||(x.t==="sale"?"নগদ বেচা":"খরচ"))+'</span><span class="sub">'+(x.t==="sale"?"নগদ বেচা":"খরচ")+(x.at?" · "+bnTime(x.at):"")+'</span></span><span class="amt"><b class="num '+(x.t==="sale"?"c-give":"c-get")+'">'+(x.t==="sale"?"+":"−")+money(x.amt)+'</b></span></button>'})),
+    ...entries.map(e=>{ const p=partyById(e.pid)||{name:"(মুছে ফেলা)"}; const sup=p.kind==="supplier"; const cashIn = e.t==="pelam" && !sup, cashOut = e.t==="dilam" && sup; return {at:e.at||0, html:'<button class="row" data-pid="'+esc(e.pid)+'"><span class="av" '+avStyle(p.name)+'>'+esc(initial(p.name))+'</span><span class="mid"><span class="name">'+esc(p.name)+'</span><span class="sub">'+(e.t==="dilam"?"দিলাম":"পেলাম")+(e.note?" · "+esc(e.note):"")+(e.at?" · "+bnTime(e.at):"")+'</span></span><span class="amt"><b class="num '+(e.t==="dilam"?"c-get":"c-give")+'">'+money(e.amt)+'</b><span class="chip '+(cashIn?"give":cashOut?"get":"zero")+'">'+(cashIn?"নগদ এলো":cashOut?"নগদ গেল":"বাকি")+'</span></span></button>'}; })
   ].sort((a,b)=>b.at-a.at);
-  $("#dlist").innerHTML = items.length ? items.map(i=>i.html).join("") : '<div class="empty">এই দিনে কোনো লেনদেন নেই।</div>';
+  $("#dlist").innerHTML = items.length ? items.map(i=>i.html).join("") : '<div class="empty"><div class="eic">'+icon("cal")+'</div>এই দিনে কোনো লেনদেন নেই।</div>';
   $("#dlist").querySelectorAll("[data-cid]").forEach(el=>el.onclick=()=>{ const x=cash.find(c=>c.id===el.dataset.cid); if(x) cashSheet(x.t,x); });
-  $("#dlist").querySelectorAll("[data-pid]").forEach(el=>el.onclick=()=>{ if(partyById(el.dataset.pid)) openParty(el.dataset.pid); });
+  $("#dlist").querySelectorAll("[data-pid]").forEach(el=>el.onclick=()=>openParty(el.dataset.pid));
 }
 
 /* ---------- সেভ হওয়ার অবস্থা ---------- */
 function renderSync(){
-  const el = $("#sync"), info = $("#syncInfo");
-  if(store && store.mode==="demo"){ el.textContent="ডেমো"; el.className="sync"; info.textContent="ডেমোতে হিসাব শুধু এই ফোনে থাকে। আসল অ্যাপে Google অ্যাকাউন্ট দিয়ে ঢুকলে প্রতিটা হিসাব অটো অনলাইনে সেভ হবে।"; return; }
-  if(!S.online){ el.textContent="নেট নেই"; el.className="sync off"; }
-  else if(S.pending){ el.textContent="সেভ হচ্ছে…"; el.className="sync"; }
-  else { el.textContent="☁ সব সেভ হয়েছে"; el.className="sync"; }
-  info.innerHTML = "প্রতিটা হিসাব আপনার Google অ্যাকাউন্টে অনলাইনে সেভ হয়। নেট না থাকলেও লেখা যাবে — ফোনে জমা থাকবে, নেট এলে নিজে থেকেই সেভ হবে।<br><br>ফোন হারালে বা অ্যাপ মুছে গেলে নতুন করে অ্যাপ ইনস্টল করে <b>একই Google অ্যাকাউন্টে</b> ঢুকলেই সব হিসাব ফিরে আসবে।<br><br>এখন: <b>"+(!S.online?"নেট নেই, নেট এলে সেভ হবে":S.pending?"সেভ হচ্ছে…":"সব হিসাব অনলাইনে সেভ আছে")+"</b>";
+  const el = $("#sync"), tx = $("#syncT"), st = $("#syncStatus"), info = $("#syncInfo");
+  if(store && store.mode==="demo"){
+    el.className="sync"; tx.textContent="ডেমো";
+    info.textContent="ডেমোতে হিসাব শুধু এই ফোনে থাকে। আসল অ্যাপে Google দিয়ে ঢুকলে প্রতিটা হিসাব অটো অনলাইনে সেভ হয়।";
+    st.className="status wait"; st.innerHTML=icon("cloud","sm")+"ডেমো চলছে"; return;
+  }
+  if(!S.online){ el.className="sync off"; tx.textContent="নেট নেই"; }
+  else if(S.pending){ el.className="sync wait"; tx.textContent="সেভ হচ্ছে…"; }
+  else { el.className="sync"; tx.textContent="সব সেভ হয়েছে"; }
+  info.innerHTML = "প্রতিটা হিসাব আপনার Google অ্যাকাউন্টে অনলাইনে সেভ হয়। নেট না থাকলেও লেখা যায়, নেট এলে নিজে থেকে সেভ হয়ে যায়।<br><br>ফোন হারালে বা অ্যাপ মুছে গেলে আবার ইনস্টল করে <b>একই Google অ্যাকাউন্টে</b> ঢুকলেই সব হিসাব ফিরে আসবে।";
+  if(!S.online){ st.className="status wait"; st.innerHTML=icon("wifi0","sm")+"নেট নেই, নেট এলে সেভ হবে"; }
+  else if(S.pending){ st.className="status wait"; st.innerHTML=icon("upd","sm")+"সেভ হচ্ছে…"; }
+  else { st.className="status"; st.innerHTML=icon("cloud","sm")+"সব হিসাব অনলাইনে সেভ আছে"; }
 }
 addEventListener("online", ()=>{ S.online=true; renderSync(); });
 addEventListener("offline", ()=>{ S.online=false; renderSync(); });
@@ -606,20 +775,23 @@ async function exportData(which){
   if(which==="p"){
     csvDownload("baki-talika-"+todayStr()+".csv", [["নাম","মোবাইল","ধরন","পাবো","দেবো"], ...d.parties.sort((a,b)=>(b.bal||0)-(a.bal||0)).map(p=>[p.name,p.phone||"",kindName(p.kind),p.bal>0?p.bal:"",p.bal<0?-p.bal:""])]);
   } else {
-    const rows = [["তারিখ","নাম","ধরন","দিলাম","পেলাম","নগদ বেচা","খরচ","বিবরণ"]];
+    const rows = [];
     d.entries.forEach(e=>rows.push([e.date,pn(e.pid),"বাকির খাতা",e.t==="dilam"?e.amt:"",e.t==="pelam"?e.amt:"","","",e.note||""]));
     d.cash.forEach(x=>rows.push([x.date,"","দৈনিক","","",x.t==="sale"?x.amt:"",x.t==="expense"?x.amt:"",x.note||""]));
-    rows.splice(1, rows.length, ...rows.slice(1).sort((a,b)=>String(b[0]).localeCompare(String(a[0]))));
-    csvDownload("sob-hisab-"+todayStr()+".csv", rows);
+    rows.sort((a,b)=>String(b[0]).localeCompare(String(a[0])));
+    csvDownload("sob-hisab-"+todayStr()+".csv", [["তারিখ","নাম","ধরন","দিলাম","পেলাম","নগদ বেচা","খরচ","বিবরণ"], ...rows]);
   }
 }
 
 /* ---------- পাতা বদল ---------- */
+const VIEW_SUB = {khata:"বাকির খাতা", day:"দৈনিক হিসাব", more:"সেটিংস"};
 function setView(v){
   S.view = v;
   $("#s-khata").hidden = v!=="khata"; $("#s-day").hidden = v!=="day"; $("#s-more").hidden = v!=="more";
   $("#fab").hidden = v!=="khata";
+  $("#topSub").textContent = VIEW_SUB[v];
   document.querySelectorAll(".nav button").forEach(b=>{ if(b.dataset.v===v) b.setAttribute("aria-current","page"); else b.removeAttribute("aria-current"); });
+  if(v==="day") renderDay();
   scrollTo(0,0);
 }
 
@@ -627,22 +799,32 @@ function wireUI(){
   document.querySelectorAll(".nav button").forEach(b=>b.onclick=()=>setView(b.dataset.v));
   document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>{ S.kind=b.dataset.k; renderKhata(); });
   $("#q").oninput = ev => { S.q = ev.target.value; renderKhata(); };
-  $("#plist").onclick = ev => { const r = ev.target.closest(".prow"); if(r) openParty(r.dataset.pid); };
+  $("#plist").onclick = ev => { const r = ev.target.closest(".row"); if(r) openParty(r.dataset.pid); };
   $("#fab").onclick = () => partySheet(null);
+  $("#nudge").onclick = () => shopSheet();
   $("#dPrev").onclick = () => { S.day = shiftDay(S.day,-1); watchDay(); };
   $("#dNext").onclick = () => { if(S.day<todayStr()){ S.day = shiftDay(S.day,1); watchDay(); } };
   $("#addSale").onclick = () => cashSheet("sale");
   $("#addExp").onclick = () => cashSheet("expense");
-  $("#shopSave").onclick = () => { const v=$("#shopInput").value.trim(); if(!v){toast("দোকানের নাম লিখুন");return;} store.setProfile({shop:v}); toast("সেভ হয়েছে"); };
+  $("#shopSave").onclick = () => { const v=$("#shopInput").value.trim(); if(!v){toast("দোকানের নাম লিখুন");return;} store.setProfile({shop:v}); $("#shopInput").blur(); toast("সেভ হয়েছে"); };
   $("#expP").onclick = () => exportData("p");
   $("#expE").onclick = () => exportData("e");
   $("#logout").onclick = () => { if(store.auth){ store.AU.signOut(store.auth); if(window.Android) Android.googleLogout(); } };
   if(window.Android){
     $("#verCard").hidden = false;
-    $("#verInfo").textContent = "এখনকার ভার্সন: "+bnNum0(Android.appVersion())+"। নতুন আপডেট এলে ফোনে নোটিফিকেশন যাবে।";
+    const ver = bnDigits(Android.appVersion());
+    $("#verInfo").textContent = "এখনকার ভার্সন: "+ver+"। নতুন আপডেট এলে ফোনে নোটিফিকেশন যাবে।";
+    $("#foot").textContent = "হিসাবের খাতা · ভার্সন "+ver;
     $("#verCheck").onclick = () => { toast("দেখা হচ্ছে…"); Android.checkUpdate(true); };
-    $("#updBtn").onclick = () => { $("#updBtn").disabled = true; $("#updText").textContent = "ডাউনলোড শুরু হচ্ছে…"; Android.startUpdate(); };
   }
+}
+
+function applyProfile(){
+  const shop = S.profile.shop || "";
+  $("#shopName").textContent = shop || "আমার দোকান";
+  $("#shopAv").textContent = initial(shop || "দোকান");
+  $("#nudge").hidden = !!shop || store.mode==="demo";
+  if(document.activeElement!==$("#shopInput")) $("#shopInput").value = shop;
 }
 
 function startApp(){
@@ -651,36 +833,38 @@ function startApp(){
   $("#demoBar").hidden = store.mode!=="demo";
   $("#accCard").hidden = store.mode==="demo";
   if(S.user) $("#accInfo").textContent = "ঢুকেছেন: "+(S.user.email||S.user.displayName||"");
-  unsubs.push(store.onProfile(pr => { S.profile = pr||{}; $("#shopName").textContent = S.profile.shop || "আমার দোকান"; if(document.activeElement!==$("#shopInput")) $("#shopInput").value = S.profile.shop||""; }));
+  unsubs.push(store.onProfile(pr => { S.profile = pr||{}; applyProfile(); }));
   unsubs.push(store.onParties(list => { S.parties = list; renderKhata(); if(S.pid) renderParty(); if(S.view==="day") renderDay(); }));
   unsubs.push(store.onSync(st => { S.pending = st.pending; renderSync(); }));
   watchDay(); renderSync();
 }
 function stopApp(){ unsubs.forEach(u=>{try{u()}catch(e){}}); unsubs=[]; if(unDay){unDay();unDay=null;} if(unParty){unParty();unParty=null;} }
 
-function loginError(e){
-  const code = e && e.code || "";
-  const m = {
-    "auth/unauthorized-domain":"এই ওয়েব ঠিকানাটা Firebase-এর Authorized domains তালিকায় যোগ করা হয়নি।",
-    "auth/network-request-failed":"নেট সংযোগ পাওয়া যাচ্ছে না। নেট চালু করে আবার চেষ্টা করুন।",
-    "auth/operation-not-allowed":"Firebase-এ Google লগইন চালু করা হয়নি।",
-    "auth/popup-closed-by-user":"লগইন মাঝপথে বন্ধ হয়েছে। আবার চাপুন।"
-  }[code] || ("লগইন হয়নি: "+(code||e.message||e));
-  const el=$("#lerr"); el.textContent=m; el.hidden=false;
-}
 /* ---------- Android থেকে আসা খবর ---------- */
-window.hkShowUpdate = (ver, notes) => { $("#upd").hidden = false; $("#updBtn").onclick = () => { $("#updBtn").disabled = true; $("#updText").textContent = "ডাউনলোড শুরু হচ্ছে…"; Android.startUpdate(); }; $("#updBtn").disabled = false; $("#updBtn").textContent = "আপডেট করুন"; $("#updText").textContent = "নতুন আপডেট এসেছে ("+bnNum0(ver)+")"+(notes?" — "+notes:""); };
+function updStart(){ $("#updBtn").disabled = true; $("#updText").textContent = "ডাউনলোড শুরু হচ্ছে…"; Android.startUpdate(); }
+window.hkShowUpdate = (ver, notes) => { $("#upd").hidden = false; $("#updBtn").disabled = false; $("#updBtn").textContent = "আপডেট করুন"; $("#updBtn").onclick = updStart; $("#updText").textContent = "নতুন আপডেট "+bnDigits(ver)+(notes?" · "+notes:""); };
 window.hkUpdateProgress = pct => { $("#upd").hidden = false; $("#updBtn").disabled = true; $("#updText").textContent = "আপডেট নামছে… "+bnNum(pct)+"%"; };
-window.hkUpdateReady = () => { $("#updBtn").disabled = false; $("#updBtn").textContent = "ইনস্টল করুন"; $("#updText").textContent = "আপডেট নামানো শেষ। ইনস্টল চাপুন।"; $("#updBtn").onclick = () => Android.installUpdate(); };
-window.hkUpdateError = msg => { $("#updBtn").disabled = false; $("#updBtn").textContent = "আবার চেষ্টা"; $("#updText").textContent = msg; $("#updBtn").onclick = () => { $("#updBtn").disabled = true; Android.startUpdate(); }; };
+window.hkUpdateReady = () => { $("#updBtn").disabled = false; $("#updBtn").textContent = "ইনস্টল করুন"; $("#updText").textContent = "আপডেট নামানো শেষ"; $("#updBtn").onclick = () => Android.installUpdate(); };
+window.hkUpdateError = msg => { $("#updBtn").disabled = false; $("#updBtn").textContent = "আবার চেষ্টা"; $("#updText").textContent = msg; $("#updBtn").onclick = updStart; };
 window.hkNoUpdate = () => toast("অ্যাপ সর্বশেষ ভার্সনেই আছে");
 window.hkToast = m => toast(m);
 
+function loginError(e){
+  const code = e && e.code || "";
+  const m = {
+    "auth/unauthorized-domain":"এই ঠিকানাটা Firebase-এর Authorized domains তালিকায় নেই।",
+    "auth/network-request-failed":"নেট সংযোগ পাওয়া যাচ্ছে না। নেট চালু করে আবার চেষ্টা করুন।",
+    "auth/operation-not-allowed":"Firebase-এ Google লগইন চালু করা হয়নি।",
+    "auth/popup-closed-by-user":"লগইন মাঝপথে বন্ধ হয়েছে। আবার চাপুন।"
+  }[code] || ((code ? "লগইন হয়নি: "+code : (e && e.message) || String(e)));
+  const el=$("#lerr"); el.textContent=m; el.hidden=false;
+}
 function showLogin(){ $("#loading").hidden=true; $("#app").hidden=true; $("#login").hidden=false; }
 
 function bootStuck(msg){
   if($("#loading").hidden) return;
-  $("#loadMsg").innerHTML = esc(msg)+'<br><br><button class="gbtn" onclick="location.reload()">আবার চেষ্টা করুন</button>';
+  $("#spin").hidden = true;
+  $("#loadMsg").innerHTML = esc(msg)+'<br><button class="gbtn" onclick="location.reload()">আবার চেষ্টা করুন</button>';
 }
 window.addEventListener("error", e => bootStuck("সমস্যা: "+(e.message||"অজানা")));
 window.addEventListener("unhandledrejection", e => bootStuck("সমস্যা: "+((e.reason&&(e.reason.code||e.reason.message))||e.reason)));
@@ -688,10 +872,10 @@ setTimeout(()=>bootStuck("অ্যাপ খুলতে দেরি হচ্
 
 async function boot(){
   wireUI();
-  const demo = window.HK_FORCE_DEMO || String(FIREBASE_CONFIG.apiKey).startsWith("PASTE");
+  const demo = !!window.HK_FORCE_DEMO;
   if(demo){ store = makeDemoStore(); startApp(); return; }
   try { store = await makeFirebaseStore(); }
-  catch(e){ showLogin(); $("#gsign").hidden=true; loginError({message:"প্রথমবার অ্যাপ খুলতে নেট লাগবে। নেট চালু করে অ্যাপটা আবার খুলুন।"}); return; }
+  catch(e){ showLogin(); $("#gsign").hidden=true; loginError({message:"অ্যাপ চালু করা যায়নি। অ্যাপটা বন্ধ করে আবার খুলুন।"}); return; }
   const {auth, AU} = store;
   window.hkIdToken = async token => {
     try { await AU.signInWithCredential(auth, AU.GoogleAuthProvider.credential(token)); }
@@ -700,20 +884,27 @@ async function boot(){
   window.hkLoginError = msg => loginError({message:msg});
   if(window.Android){
     $("#gsign").onclick = () => { $("#lerr").hidden = true; Android.googleLogin(); };
-  } else AU.getRedirectResult(auth).catch(loginError);
-  if(!window.Android) $("#gsign").onclick = async () => {
-    $("#lerr").hidden = true;
-    const prov = new AU.GoogleAuthProvider(); prov.setCustomParameters({prompt:"select_account"});
-    try { await AU.signInWithPopup(auth, prov); }
-    catch(e){
-      if(["auth/popup-blocked","auth/operation-not-supported-in-this-environment","auth/cancelled-popup-request","auth/web-storage-unsupported"].includes(e.code)){
-        try { await AU.signInWithRedirect(auth, prov); } catch(e2){ loginError(e2); }
-      } else loginError(e);
-    }
-  };
+  } else {
+    AU.getRedirectResult(auth).catch(loginError);
+    $("#gsign").onclick = async () => {
+      $("#lerr").hidden = true;
+      const prov = new AU.GoogleAuthProvider(); prov.setCustomParameters({prompt:"select_account"});
+      try { await AU.signInWithPopup(auth, prov); }
+      catch(e){
+        if(["auth/popup-blocked","auth/operation-not-supported-in-this-environment","auth/cancelled-popup-request","auth/web-storage-unsupported"].includes(e.code)){
+          try { await AU.signInWithRedirect(auth, prov); } catch(e2){ loginError(e2); }
+        } else loginError(e);
+      }
+    };
+  }
   AU.onAuthStateChanged(auth, user => {
     if(user){ S.user = user; store.setUser(user); startApp(); }
-    else { S.user = null; stopApp(); while(layers.length) layers.pop()(); $("#pv").hidden=true; $("#sheetWrap").hidden=true; showLogin(); }
+    else {
+      S.user = null; stopApp();
+      while(layers.length) layers.pop()();
+      $("#pv").hidden=true; $("#sheetWrap").hidden=true; document.body.style.overflow="";
+      showLogin();
+    }
   });
 }
 boot();

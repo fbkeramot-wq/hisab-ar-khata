@@ -5,7 +5,7 @@ import os
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 WWW = os.path.join(ROOT, "app", "src", "main", "assets", "www")
 body = open(os.path.join(ROOT, "web", "app-body.html"), encoding="utf-8").read()
-gf = '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Tiro+Bangla&display=swap">'
+gf = '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anek+Bangla:wght@400..800&family=Noto+Sans+Bengali:wght@400..700&display=swap">'
 assert gf in body
 body = body.replace(gf, '<link rel="stylesheet" href="fonts/fonts.css">')
 
@@ -14,7 +14,7 @@ head = """<!doctype html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#7A1F24">
+<meta name="theme-color" content="#0A5A4E">
 </head>
 <body>
 """

@@ -56,7 +56,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         web = WebView(this)
-        web.setBackgroundColor(Color.parseColor("#7A1F24"))
+        web.setBackgroundColor(Color.parseColor("#0A5A4E"))
         setContentView(web)
 
         val loader = WebViewAssetLoader.Builder()

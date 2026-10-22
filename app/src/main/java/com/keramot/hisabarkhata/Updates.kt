@@ -86,7 +86,7 @@ object Updates {
         val text = if (info.notes.isNotBlank()) info.notes else "চাপ দিয়ে আপডেট করুন"
         val n = NotificationCompat.Builder(ctx, CHANNEL)
             .setSmallIcon(R.drawable.ic_notif)
-            .setColor(0xFF7A1F24.toInt())
+            .setColor(0xFF0A5A4E.toInt())
             .setContentTitle("হিসাবের খাতার নতুন আপডেট (${info.version})")
             .setContentText(text)
             .setStyle(NotificationCompat.BigTextStyle().bigText("$text\nচাপ দিলে অ্যাপের ভেতরেই আপডেট হবে।"))
