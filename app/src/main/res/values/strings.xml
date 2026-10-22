@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">হিসাব খাতা</string>
+    <string name="app_name">হিসাবের খাতা</string>
     <!-- Firebase → Authentication → Google → Web client ID -->
     <string name="web_client_id" translatable="false">794970715291-34m4i9e7j4c8lbtdv7nc2o7cu2bal3l6.apps.googleusercontent.com</string>
 </resources>

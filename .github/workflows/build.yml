@@ -37,7 +37,7 @@ jobs:
       - uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ steps.v.outputs.name }}
-          name: হিসাব খাতা ${{ steps.v.outputs.name }}
+          name: হিসাবের খাতা ${{ steps.v.outputs.name }}
           body_path: RELEASE_NOTES.md
           files: HisabKhata.apk
           make_latest: true

@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#7A1F24">
 </head>
 <body>
-<title>হিসাব খাতা</title>
+<title>হিসাবের খাতা</title>
 <link rel="stylesheet" href="fonts/fonts.css">
 <style>
 /* Layout: one-column phone app — maroon "hal khata" cover bar on top, ruled ledger pages below, bottom tab bar */
@@ -27,6 +27,7 @@
   --chip:#252D2A; --shadow:0 1px 2px rgba(0,0,0,.4); color-scheme:dark}
 
 *{box-sizing:border-box}
+[hidden]{display:none!important}
 html,body{height:100%}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.5;-webkit-tap-highlight-color:transparent}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--cover)}
@@ -181,12 +182,12 @@ main{padding-bottom:calc(150px + env(safe-area-inset-bottom,0px))}
 @media (prefers-reduced-motion:no-preference){.sheet{animation:up .18s ease-out}@keyframes up{from{transform:translateY(30px);opacity:.6}}}
 </style>
 
-<div id="loading" class="login"><div class="wrap"><h1>হিসাব খাতা</h1><p>খোলা হচ্ছে…</p></div></div>
+<div id="loading" class="login"><div class="wrap"><h1>হিসাবের খাতা</h1><p id="loadMsg">খোলা হচ্ছে…</p></div></div>
 
 <div id="login" class="login" hidden>
   <div class="wrap">
     <svg class="logo" viewBox="0 0 84 84" aria-hidden="true"><rect x="10" y="12" width="64" height="62" rx="6" fill="#F6E6C4"/><rect x="10" y="12" width="10" height="62" rx="3" fill="#C9A86A"/><path d="M28 30h36M28 42h36M28 54h24" stroke="#7A1F24" stroke-width="4" stroke-linecap="round"/></svg>
-    <h1>হিসাব খাতা</h1>
+    <h1>হিসাবের খাতা</h1>
     <p>দোকানের বাকি আর দৈনিক বেচা-খরচের হিসাব। সব হিসাব আপনার Google অ্যাকাউন্টে নিরাপদে থাকে।</p>
     <button id="gsign" class="gbtn"><svg viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="m6.3 14.7 6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg>Google দিয়ে ঢুকুন</button>
     <div id="lerr" class="lerr" hidden></div>
@@ -329,9 +330,14 @@ async function makeFirebaseStore(){
   const base = window.Android ? "./firebase/" : "https://www.gstatic.com/firebasejs/"+FB_VER+"/";
   const [A, AU, F] = await Promise.all([import(base+"firebase-app.js"), import(base+"firebase-auth.js"), import(base+"firebase-firestore.js")]);
   const app = A.initializeApp(FIREBASE_CONFIG);
-  const auth = AU.getAuth(app);
+  let auth;
+  if(window.Android){
+    // অ্যাপের ভেতরে popup/redirect লাগে না (লগইন হয় ফোনের Google দিয়ে)
+    try { auth = AU.initializeAuth(app, {persistence:[AU.indexedDBLocalPersistence, AU.browserLocalPersistence]}); }
+    catch(e){ auth = AU.getAuth(app); }
+  } else auth = AU.getAuth(app);
   let fdb;
-  try { fdb = F.initializeFirestore(app, {localCache: F.persistentLocalCache({tabManager: F.persistentMultipleTabManager()})}); }
+  try { fdb = F.initializeFirestore(app, {localCache: F.persistentLocalCache({tabManager: window.Android ? F.persistentSingleTabManager() : F.persistentMultipleTabManager()})}); }
   catch(e){ fdb = F.getFirestore(app); }
   let uid = null, pending = 0; const syncSubs = new Set();
   const emit = () => syncSubs.forEach(f=>f({pending: pending>0}));
@@ -671,6 +677,14 @@ window.hkNoUpdate = () => toast("অ্যাপ সর্বশেষ ভার
 window.hkToast = m => toast(m);
 
 function showLogin(){ $("#loading").hidden=true; $("#app").hidden=true; $("#login").hidden=false; }
+
+function bootStuck(msg){
+  if($("#loading").hidden) return;
+  $("#loadMsg").innerHTML = esc(msg)+'<br><br><button class="gbtn" onclick="location.reload()">আবার চেষ্টা করুন</button>';
+}
+window.addEventListener("error", e => bootStuck("সমস্যা: "+(e.message||"অজানা")));
+window.addEventListener("unhandledrejection", e => bootStuck("সমস্যা: "+((e.reason&&(e.reason.code||e.reason.message))||e.reason)));
+setTimeout(()=>bootStuck("অ্যাপ খুলতে দেরি হচ্ছে। নেট চালু আছে কিনা দেখে আবার চেষ্টা করুন।"), 20000);
 
 async function boot(){
   wireUI();
