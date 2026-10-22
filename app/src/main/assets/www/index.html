@@ -196,6 +196,13 @@ main{padding-bottom:calc(150px + env(safe-area-inset-bottom,0px))}
 .money i{font-style:normal;font-family:var(--f-head);font-weight:700;font-size:1.6rem;color:var(--faint)}
 .money input{flex:1;min-width:0;border:0;background:transparent;font-family:var(--f-head);font-weight:700;font-size:1.9rem;padding:8px 8px;outline:none}
 .seg{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.seg.c3{grid-template-columns:repeat(3,1fr)}
+.paylist{display:grid;gap:8px;margin-bottom:10px}
+.payrow{display:flex;align-items:center;gap:10px;width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:14px;background:var(--field);text-align:left}
+.pbadge{flex:none;min-width:54px;text-align:center;font-size:.76rem;font-weight:700;color:#fff;padding:5px 8px;border-radius:9px}
+.payrow .mid b{display:block;font-family:var(--f-head);font-weight:650;font-size:1rem;letter-spacing:.02em}
+.preview{white-space:pre-wrap;font-size:.8rem;line-height:1.55;background:#F4FBF8;border:1px dashed var(--give-line);border-radius:12px;padding:10px 12px;color:var(--ink);margin-top:10px}
+.preview-l{font-size:.74rem;font-weight:700;color:var(--muted);margin-top:12px}
 .seg label{position:relative}
 .seg input{position:absolute;opacity:0;pointer-events:none}
 .seg span{display:block;text-align:center;padding:11px 6px;border:1.5px solid var(--line);border-radius:12px;font-weight:600;font-size:.9rem;color:var(--muted)}
@@ -271,6 +278,7 @@ main{padding-bottom:calc(150px + env(safe-area-inset-bottom,0px))}
   <symbol id="i-imo" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M9 9.5v5M12 14.5v-5l1.5 2 1.5-2v5"/></symbol>
   <symbol id="i-msgr" viewBox="0 0 24 24"><path d="M12 3.5c-4.8 0-8.5 3.5-8.5 8 0 2.5 1.2 4.7 3 6.1V21l2.9-1.6c.8.2 1.7.3 2.6.3 4.8 0 8.5-3.5 8.5-8s-3.7-8.2-8.5-8.2z"/><path d="m7.5 13.5 3-3.2 2 2 3.5-2.8-3 3.2-2-2z"/></symbol>
   <symbol id="i-share" viewBox="0 0 24 24"><circle cx="18" cy="5.5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="18.5" r="2.5"/><path d="m8.2 10.8 7.6-4M8.2 13.2l7.6 4"/></symbol>
+  <symbol id="i-wallet" viewBox="0 0 24 24"><path d="M4 7.5A2.5 2.5 0 0 1 6.5 5H18v3"/><path d="M4 7.5V17a2 2 0 0 0 2 2h14V9H6.5A2.5 2.5 0 0 1 4 7.5z"/><circle cx="16" cy="14" r="1.2"/></symbol>
   <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15zM10 20a2 2 0 0 0 4 0"/></symbol>
 </svg>
 
@@ -334,6 +342,7 @@ main{padding-bottom:calc(150px + env(safe-area-inset-bottom,0px))}
     </section>
     <section class="screen wrap" id="s-more" hidden>
       <div class="card"><h3><svg class="ic"><use href="#i-store"/></svg>দোকানের নাম</h3><p>উপরে আর তাগাদার মেসেজে এই নাম দেখাবে।</p><div class="btnrow"><input class="field" style="flex:1 1 180px;min-width:0" id="shopInput" placeholder="যেমন: মায়ের দোয়া স্টোর"><button class="btn pri" id="shopSave" style="flex:0 0 auto">সেভ</button></div></div>
+      <div class="card"><h3><svg class="ic"><use href="#i-wallet"/></svg>পেমেন্ট নম্বর</h3><p>বিকাশ, নগদ, রকেট বা উপায় নম্বর দিন। তাগাদার মেসেজের নিচে এগুলো চলে যাবে, কাস্টমার সহজে টাকা পাঠাতে পারবে।</p><div class="paylist" id="payList"></div><button class="btn full" id="payAdd"><svg class="ic sm"><use href="#i-plus"/></svg>নম্বর যোগ করুন</button><div id="payPrev"></div></div>
       <div class="card"><h3><svg class="ic"><use href="#i-cloud"/></svg>হিসাব কোথায় থাকে</h3><p id="syncInfo"></p><div class="status" id="syncStatus"></div><div id="diagBox" class="hint" hidden></div><button class="btn full" id="diagBtn" style="margin-top:10px" hidden>সমস্যা খুঁজুন</button></div>
       <div class="card"><h3><svg class="ic"><use href="#i-down"/></svg>হিসাব ডাউনলোড</h3><p>এক্সেলে খোলা যায় এমন ফাইল। মাঝে মাঝে নামিয়ে রাখলে বাড়তি নিরাপত্তা।</p><div class="btnrow"><button class="btn" id="expP"><svg class="ic sm"><use href="#i-users"/></svg>বাকির তালিকা</button><button class="btn" id="expE"><svg class="ic sm"><use href="#i-book"/></svg>সব লেনদেন</button></div></div>
       <div class="card" id="verCard" hidden><h3><svg class="ic"><use href="#i-upd"/></svg>অ্যাপ আপডেট</h3><p id="verInfo"></p><button class="btn full" id="verCheck">আপডেট আছে কিনা দেখুন</button></div>
@@ -425,7 +434,7 @@ function makeDemoStore(){
   if(!db){
     const t = todayStr(), now = Date.now(), H = 3600e3;
     const P = (id,name,phone,kind,lastAt) => ({id,name,phone,kind,bal:0,createdAt:now,lastAt});
-    db = { profile:{shop:"মায়ের দোয়া স্টোর"},
+    db = { profile:{shop:"মায়ের দোয়া স্টোর", payments:[{m:"bkash",num:"01711223344",t:"personal"},{m:"nagad",num:"01811223344",t:"agent"}]},
       parties:[P("p1","রহিম মিয়া","01711000001","customer",now-1*H),P("p2","সালমা খাতুন","01811000002","customer",now-5*H),P("p3","হাসান (চা দোকান)","01911000003","customer",now-30*H),P("p4","করিম শেখ","","customer",now-70*H),P("p6","আবুল হোসেন","01511000006","customer",now-50*H),P("p5","মোল্লা ট্রেডার্স","01611000005","supplier",now-20*H)],
       entries:[], cash:[] };
     const E = (pid,t,amt,note,date,at) => { db.entries.push({id:uid(),pid,t,amt,note,date,at}); const p=db.parties.find(x=>x.id===pid); p.bal+= t==="dilam"?amt:-amt; };
@@ -589,7 +598,58 @@ function openParty(pid){
   pushLayer(closeParty);
 }
 function closeParty(){ $("#pv").hidden = true; $("#pv").innerHTML=""; document.body.style.overflow=""; S.pid=null; if(unParty){unParty();unParty=null;} }
-function tagadaText(p){ const shop=S.profile.shop||"আমাদের দোকান"; return "আসসালামু আলাইকুম, "+p.name+"। "+shop+"-এ আপনার বাকি "+money(p.bal)+"। সুবিধামতো সময়ে পরিশোধ করার অনুরোধ রইল। ধন্যবাদ।"; }
+const PAY_M = { bkash:{n:"বিকাশ",c:"#D2145A"}, nagad:{n:"নগদ",c:"#E4572E"}, rocket:{n:"রকেট",c:"#7A2E8E"}, upay:{n:"উপায়",c:"#1E5AA8"}, other:{n:"অন্য",c:"#4B5B57"} };
+const PAY_T = { personal:{n:"পার্সোনাল",how:"সেন্ড মানি"}, agent:{n:"এজেন্ট",how:"ক্যাশ আউট"}, merchant:{n:"মার্চেন্ট",how:"পেমেন্ট"} };
+const payments = () => Array.isArray(S.profile.payments) ? S.profile.payments : [];
+function payLine(x){ const m=PAY_M[x.m]||PAY_M.other, t=PAY_T[x.t]||PAY_T.personal; return "• "+(x.m==="other"&&x.label?x.label:m.n)+" ("+t.n+"): "+x.num+" (" + t.how + ")"; }
+function tagadaText(p){
+  const shop=S.profile.shop||"আমাদের দোকান";
+  let s = "আসসালামু আলাইকুম, "+p.name+"। "+shop+"-এ আপনার বাকি "+money(p.bal)+"। সুবিধামতো সময়ে পরিশোধ করার অনুরোধ রইল।";
+  const pays = payments();
+  if(pays.length) s += "\n\nমোবাইলে টাকা পাঠাতে পারেন:\n"+pays.map(payLine).join("\n")+"\nরেফারেন্সে আপনার নাম লিখবেন।";
+  return s+"\n\nধন্যবাদ।";
+}
+function renderPay(){
+  const pays = payments();
+  $("#payList").innerHTML = pays.map((x,i)=>{ const m=PAY_M[x.m]||PAY_M.other, t=PAY_T[x.t]||PAY_T.personal; return '<button class="payrow" data-i="'+i+'"><span class="pbadge" style="background:'+m.c+'">'+esc(x.m==="other"&&x.label?x.label:m.n)+'</span><span class="mid"><b>'+esc(x.num)+'</b><span class="sub">'+t.n+' · কাস্টমার করবে '+t.how+'</span></span>'+icon("edit","sm")+'</button>'; }).join("");
+  $("#payList").querySelectorAll(".payrow").forEach(el=>el.onclick=()=>paySheet(+el.dataset.i));
+  $("#payAdd").hidden = pays.length>=6;
+  $("#payPrev").innerHTML = pays.length ? '<div class="preview-l">তাগাদার মেসেজ এভাবে যাবে</div><div class="preview">'+esc(tagadaText({name:"রহিম মিয়া",bal:500}))+'</div>' : '';
+}
+function paySheet(i){
+  const pays = payments().slice(), x = i!=null ? pays[i] : null, mm = x ? x.m : "bkash", tt = x ? x.t : "personal";
+  const mr = Object.entries(PAY_M).map(([k,v])=>'<label><input type="radio" name="fM" value="'+k+'" '+(k===mm?"checked":"")+'><span>'+v.n+'</span></label>').join("");
+  const tr = Object.entries(PAY_T).map(([k,v])=>'<label><input type="radio" name="fPT" value="'+k+'" '+(k===tt?"checked":"")+'><span>'+v.n+'</span></label>').join("");
+  openSheet(x?"পেমেন্ট নম্বর বদলান":"পেমেন্ট নম্বর যোগ",
+    '<div class="f"><span>কোন মাধ্যম</span><div class="seg c3">'+mr+'</div></div>'+
+    '<label class="f" id="fLabelW"><span>মাধ্যমের নাম</span><input class="field" id="fLabel" autocomplete="off" value="'+esc(x&&x.label||"")+'" placeholder="যেমন: ডাচ-বাংলা ব্যাংক / সেলফিন"></label>'+
+    '<label class="f"><span>নম্বর</span><input class="field" id="fNum" inputmode="tel" autocomplete="off" value="'+esc(x?x.num:"")+'" placeholder="01XXXXXXXXX"></label>'+
+    '<div class="f"><span>নম্বরের ধরন</span><div class="seg c3">'+tr+'</div></div>'+
+    '<div class="hint" id="fHow" style="margin:-4px 2px 14px"></div>'+
+    '<button class="save" id="fSave">সেভ করুন</button>'+
+    (x?'<button class="del" id="fDel">'+icon("trash","sm")+'এই নম্বর মুছুন</button>':''),
+    w => {
+      const upd = () => {
+        const m = w.querySelector('input[name="fM"]:checked').value, t = w.querySelector('input[name="fPT"]:checked').value;
+        w.querySelector("#fLabelW").hidden = m!=="other";
+        w.querySelector("#fHow").textContent = "কাস্টমারকে বলা হবে এই নম্বরে "+PAY_T[t].how+" করতে।"+(t==="agent"?" (ক্যাশ আউটের খরচ কাস্টমারের লাগবে)":"");
+      };
+      w.querySelectorAll('input[name="fM"],input[name="fPT"]').forEach(r=>r.onchange=upd); upd();
+      w.querySelector("#fSave").onclick = () => {
+        const m = w.querySelector('input[name="fM"]:checked').value, t = w.querySelector('input[name="fPT"]:checked').value;
+        const num = toEn(w.querySelector("#fNum").value).replace(/[^\d+]/g,"");
+        const label = w.querySelector("#fLabel").value.trim();
+        if(m!=="other" && !/^01\d{9}$/.test(num)){ toast("সঠিক ১১ অঙ্কের মোবাইল নম্বর লিখুন"); w.querySelector("#fNum").focus(); return; }
+        if(m==="other" && (!num || !label)){ toast("মাধ্যমের নাম আর নম্বর লিখুন"); return; }
+        const item = {m, num, t}; if(m==="other") item.label = label;
+        if(x) pays[i] = item; else pays.push(item);
+        store.setProfile({payments:pays});
+        popLayer(() => toast("সেভ হয়েছে"));
+      };
+      const del = w.querySelector("#fDel");
+      if(del) del.onclick = () => confirmBox(w, x.num+" নম্বরটা মুছে যাবে। নিশ্চিত?", () => { pays.splice(i,1); store.setProfile({payments:pays}); popLayer(() => toast("মুছে ফেলা হয়েছে")); });
+    });
+}
 function renderParty(){
   if(!S.pid) return;
   const p = partyById(S.pid);
@@ -844,6 +904,7 @@ function wireUI(){
   $("#plist").onclick = ev => { const r = ev.target.closest(".row"); if(r) openParty(r.dataset.pid); };
   $("#fab").onclick = () => partySheet(null);
   $("#nudge").onclick = () => shopSheet();
+  $("#payAdd").onclick = () => paySheet(null);
   $("#dPrev").onclick = () => { S.day = shiftDay(S.day,-1); watchDay(); };
   $("#dNext").onclick = () => { if(S.day<todayStr()){ S.day = shiftDay(S.day,1); watchDay(); } };
   $("#addSale").onclick = () => cashSheet("sale");
@@ -863,6 +924,7 @@ function wireUI(){
 }
 
 function applyProfile(){
+  renderPay();
   const shop = S.profile.shop || "";
   $("#shopName").textContent = shop || "আমার দোকান";
   $("#shopAv").textContent = initial(shop || "দোকান");
@@ -877,7 +939,7 @@ function startApp(){
   $("#accCard").hidden = store.mode==="demo";
   $("#diagBtn").hidden = store.mode==="demo";
   if(S.user) $("#accInfo").textContent = "ঢুকেছেন: "+(S.user.email||S.user.displayName||"");
-  unsubs.push(store.onProfile(pr => { S.profile = pr||{}; applyProfile(); }));
+  unsubs.push(store.onProfile(pr => { S.profile = pr||{}; applyProfile(); if(S.pid) renderParty(); }));
   unsubs.push(store.onParties(list => { S.parties = list; renderKhata(); if(S.pid) renderParty(); if(S.view==="day") renderDay(); }));
   unsubs.push(store.onSync(st => { S.pending = st.pending; renderSync(); }));
   watchDay(); renderSync();
