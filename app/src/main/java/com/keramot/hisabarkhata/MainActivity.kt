@@ -135,6 +135,24 @@ class MainActivity : ComponentActivity() {
     private fun q(s: String) = JSONObject.quote(s)
     private fun toast(msg: String) = js("window.hkToast && hkToast(${q(msg)})")
 
+    // ---------- IMO / Messenger / অন্য অ্যাপে তাগাদা ----------
+    private fun shareText(target: String, text: String) {
+        val (label, pkgs) = when (target) {
+            "imo" -> "IMO" to listOf("com.imo.android.imoim", "com.imo.android.imoimlite", "com.imo.android.imoimbeta")
+            "messenger" -> "Messenger" to listOf("com.facebook.orca", "com.facebook.mlite")
+            else -> "" to emptyList()
+        }
+        val base = Intent(Intent.ACTION_SEND).setType("text/plain").putExtra(Intent.EXTRA_TEXT, text)
+        if (pkgs.isEmpty()) {
+            try { startActivity(Intent.createChooser(base, "তাগাদা পাঠান")) } catch (_: Exception) { toast("পাঠানোর মতো অ্যাপ পাওয়া যায়নি") }
+            return
+        }
+        for (p in pkgs) {
+            try { startActivity(Intent(base).setPackage(p)); toast("$label খুলছে, যাকে পাঠাবেন তাকে বেছে নিন"); return } catch (_: ActivityNotFoundException) {}
+        }
+        toast("ফোনে $label পাওয়া যায়নি")
+    }
+
     private fun openOutside(u: Uri) {
         try {
             val i = if (u.scheme == "tel") Intent(Intent.ACTION_DIAL, u) else Intent(Intent.ACTION_VIEW, u)
@@ -297,6 +315,7 @@ class MainActivity : ComponentActivity() {
         @JavascriptInterface fun googleLogin() = runOnUiThread { this@MainActivity.googleLogin() }
         @JavascriptInterface fun googleLogout() = runOnUiThread { this@MainActivity.googleLogout() }
         @JavascriptInterface fun saveFile(name: String, content: String) = this@MainActivity.saveFile(name, content)
+        @JavascriptInterface fun shareText(target: String, text: String) = runOnUiThread { this@MainActivity.shareText(target, text) }
         @JavascriptInterface fun appVersion(): String = BuildConfig.VERSION_NAME
         @JavascriptInterface fun checkUpdate(manual: Boolean) = checkForUpdate(manual)
         @JavascriptInterface fun startUpdate() = runOnUiThread { startDownload() }

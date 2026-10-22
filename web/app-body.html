@@ -111,7 +111,9 @@ main{padding-bottom:calc(150px + env(safe-area-inset-bottom,0px))}
 .balrow b{display:block;font-family:var(--f-head);font-weight:750;font-size:2rem;line-height:1.15}
 .acts{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px;padding-top:14px;border-top:1px dashed var(--line)}
 .act{display:flex;flex-direction:column;align-items:center;gap:4px;text-decoration:none;color:var(--brand);font-size:.78rem;font-weight:600;padding:8px 4px;border-radius:12px;background:var(--brand-soft)}
+.act{border:0;font-family:inherit}
 .act.dis{opacity:.4;pointer-events:none}
+.tlabel{grid-column:1/-1;font-size:.74rem;font-weight:700;color:var(--muted);margin:4px 2px -2px}
 .hint{font-size:.8rem;color:var(--muted);margin:10px 4px 0}
 
 .ledger{margin-top:14px;background:var(--card);border-radius:18px;box-shadow:var(--shadow);overflow:hidden}
@@ -258,6 +260,9 @@ main{padding-bottom:calc(150px + env(safe-area-inset-bottom,0px))}
   <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M3 20a6 6 0 0 1 12 0M16 4.5a3.5 3.5 0 0 1 0 7M18 14a6 6 0 0 1 3 6"/></symbol>
   <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3 5 6v6c0 4.5 3 7.5 7 9 4-1.5 7-4.5 7-9V6z"/><path d="m9 12 2 2 4-4"/></symbol>
   <symbol id="i-wifi0" viewBox="0 0 24 24"><path d="M3 3l18 18M8.5 16.5a5 5 0 0 1 7 0M5 13a10 10 0 0 1 5-2.7M14 10.3A10 10 0 0 1 19 13M2 9.5a15 15 0 0 1 4.5-2.8M11 5a15 15 0 0 1 11 4.5"/><circle cx="12" cy="20" r=".8"/></symbol>
+  <symbol id="i-imo" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M9 9.5v5M12 14.5v-5l1.5 2 1.5-2v5"/></symbol>
+  <symbol id="i-msgr" viewBox="0 0 24 24"><path d="M12 3.5c-4.8 0-8.5 3.5-8.5 8 0 2.5 1.2 4.7 3 6.1V21l2.9-1.6c.8.2 1.7.3 2.6.3 4.8 0 8.5-3.5 8.5-8s-3.7-8.2-8.5-8.2z"/><path d="m7.5 13.5 3-3.2 2 2 3.5-2.8-3 3.2-2-2z"/></symbol>
+  <symbol id="i-share" viewBox="0 0 24 24"><circle cx="18" cy="5.5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="18.5" r="2.5"/><path d="m8.2 10.8 7.6-4M8.2 13.2l7.6 4"/></symbol>
   <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15zM10 20a2 2 0 0 0 4 0"/></symbol>
 </svg>
 
@@ -465,7 +470,10 @@ async function makeFirebaseStore(){
     catch(e){ auth = AU.getAuth(app); }
   } else auth = AU.getAuth(app);
   let fdb;
-  try { fdb = F.initializeFirestore(app, {localCache: F.persistentLocalCache({tabManager: window.Android ? F.persistentSingleTabManager() : F.persistentMultipleTabManager()})}); }
+  const fsOpts = {localCache: F.persistentLocalCache({tabManager: window.Android ? F.persistentSingleTabManager() : F.persistentMultipleTabManager()})};
+  // ফোনের ভেতরের ব্রাউজারে (WebView) স্ট্রিমিং সংযোগ মাঝে মাঝে আটকে থাকে, তাই সরাসরি ছোট ছোট অনুরোধে পাঠানো হয় — সেভ দ্রুত হয়
+  if(window.Android) fsOpts.experimentalForceLongPolling = true;
+  try { fdb = F.initializeFirestore(app, fsOpts); }
   catch(e){ fdb = F.getFirestore(app); }
   let uid = null, pending = 0; const syncSubs = new Set();
   const emit = () => syncSubs.forEach(f=>f({pending: pending>0}));
@@ -565,7 +573,7 @@ function renderParty(){
   S.pvSeen = true;
   const b = balInfo(p.bal||0), sup = p.kind==="supplier";
   const ph = p.phone ? phoneBD(p.phone) : "";
-  const canTag = !!ph && p.bal>0;
+  const owes = p.bal>0, canTag = !!ph && owes;
   const asc = [...S.pEntries].sort((x,y)=> (x.date||"").localeCompare(y.date||"") || (x.at||0)-(y.at||0));
   let run = 0; const balAfter = {};
   asc.forEach(e=>{ run += eff(e); balAfter[e.id] = run; });
@@ -579,10 +587,14 @@ function renderParty(){
     '<div class="lhead"><div class="wrap"><button class="ib" id="pvBack" aria-label="ফিরে যান">'+icon("back")+'</button><span class="av sm" '+avStyle(p.name)+'>'+esc(initial(p.name))+'</span><div class="lt"><b>'+esc(p.name)+'</b><small>'+kindName(p.kind)+(p.phone?" · "+esc(bnDigits(p.phone)):"")+'</small></div><button class="ib" id="pvEdit" aria-label="তথ্য বদলান">'+icon("edit")+'</button></div></div>'+
     '<div class="hero"><div class="wrap" style="padding-top:6px">'+
       '<div class="balcard"><div class="balrow"><div><small>'+balLbl+'</small><b class="'+(b.cls==="get"?"c-get":b.cls==="give"?"c-give":"c-muted")+'">'+b.amt+'</b></div><span class="chip '+b.cls+'">'+bnNum(ents.length)+'টি লেনদেন</span></div>'+
-      '<div class="acts"><a class="act '+(ph?"":"dis")+'" href="'+(ph?"tel:+"+ph:"#")+'">'+icon("phone")+'কল</a><a class="act '+(canTag?"":"dis")+'" href="'+(canTag?"sms:+"+ph+"?body="+encodeURIComponent(tagadaText(p)):"#")+'">'+icon("msg")+'তাগাদা SMS</a><a class="act '+(canTag?"":"dis")+'" target="_blank" rel="noopener" href="'+(canTag?"https://wa.me/"+ph+"?text="+encodeURIComponent(tagadaText(p)):"#")+'">'+icon("chat")+'WhatsApp</a></div></div>'+
+      '<div class="acts"><a class="act '+(ph?"":"dis")+'" href="'+(ph?"tel:+"+ph:"#")+'">'+icon("phone")+'কল</a>'+
+        '<a class="act '+(canTag?"":"dis")+'" href="'+(canTag?"sms:+"+ph+"?body="+encodeURIComponent(tagadaText(p)):"#")+'">'+icon("msg")+'SMS</a>'+
+        '<a class="act '+(canTag?"":"dis")+'" target="_blank" rel="noopener" href="'+(canTag?"https://wa.me/"+ph+"?text="+encodeURIComponent(tagadaText(p)):"#")+'">'+icon("chat")+'WhatsApp</a>'+
+        (window.Android ? '<button class="act '+(owes?"":"dis")+'" data-share="imo">'+icon("imo")+'IMO</button><button class="act '+(owes?"":"dis")+'" data-share="messenger">'+icon("msgr")+'Messenger</button><button class="act '+(owes?"":"dis")+'" data-share="other">'+icon("share")+'অন্য অ্যাপে</button>' : '')+
+      '</div></div>'+
     '</div></div>'+
     '<div class="wrap" style="padding-bottom:calc(110px + env(safe-area-inset-bottom,0px))">'+
-      (ph?'':'<div class="hint">মোবাইল নম্বর যোগ করলে কল আর তাগাদা পাঠানো যাবে। উপরে ✎ চাপুন।</div>')+
+      (ph?'':'<div class="hint">মোবাইল নম্বর যোগ করলে কল, SMS আর WhatsApp-এ তাগাদা পাঠানো যাবে। উপরে ✎ চাপুন।</div>')+
       '<div class="ledger"><div class="lrow h"><span>বিবরণ ও জের</span><span>দিলাম</span><span>পেলাম</span></div>'+rows+'</div>'+
       '<div class="hint">'+(sup?"মহাজন থেকে বাকিতে মাল আনলে <b>পেলাম</b>, টাকা দিলে <b>দিলাম</b>।":"বাকিতে মাল দিলে <b>দিলাম</b>, টাকা জমা পেলে <b>পেলাম</b>।")+' কোনো লাইন ভুল হলে সেটার ওপর চাপ দিয়ে ঠিক করুন।</div>'+
     '</div>'+
@@ -593,6 +605,7 @@ function renderParty(){
   $("#pvGot").onclick = () => entrySheet(p,"pelam");
   $("#pv").querySelectorAll(".lrow[data-eid]").forEach(el=>el.onclick=()=>{ const e=S.pEntries.find(x=>x.id===el.dataset.eid); if(e) entrySheet(p,e.t,e); });
   $("#pv").querySelectorAll(".act.dis").forEach(a=>a.onclick=ev=>ev.preventDefault());
+  $("#pv").querySelectorAll("[data-share]").forEach(bt=>bt.onclick=()=>{ if(window.Android && Android.shareText) Android.shareText(bt.dataset.share, tagadaText(p)); });
 }
 
 /* ---------- ফর্ম (নিচ থেকে ওঠে) ---------- */
